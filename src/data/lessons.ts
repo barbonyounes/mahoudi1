@@ -71,6 +71,10 @@ export const lessons: LessonDef[] = [
   lessonAbsPathsLiver,
   lessonCirculation,
   lessonInternalMilieu,
+  lessonEqPhenomenon,
+  lessonEqCauses,
+  lessonVolcanoActivity,
+  lessonSubduction,
 ];
 
 export function getLessonById(id: string): LessonDef | undefined {
