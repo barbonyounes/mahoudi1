@@ -1,14 +1,38 @@
-# Welcome to your Lovable project
+# Remix of Remix of Digital Lesson Flow
+
+"أنت خبير متقدم في تصميم واجهات المستخدم (UI/UX) وهندسة المنصات التعليمية الرقمية.
+
+السياق: أنا أستاذة مادة العلوم الطبيعية والحياة لمرحلة التعليم المتوسط. أواجه تحديات مهنية في النمط التقليدي لتقديم الدرس، تتمثل في: صعوبة الإدارة الصارمة لوقت الحصة، الجهد البدني والذهني في الانتقال بين الوسائط التعليمية، تباين مستويات استيعاب التلاميذ، وانخفاض دافعية بعضهم نحو التعلم الفوري.
+
+الفكرة الأساسية: أخطط لتطوير صفحة ويب تفاعلية موحدة (تعمل محلياً) تُعرض من حاسوبي الشخصي للتلاميذ عبر جهاز الإسقاط (Data Show). الهدف من هذه الصفحة هو دمج جميع عناصر الحصة في مسار رقمي واحد ومبرمج مسبقاً. ستتضمن الصفحة: فيديوهات مبنية بالذكاء الاصطناعي لوضعيات الانطلاق، الوثائق العلمية، تجارب ومحاكاة رقمية، أسئلة تقييمية مفاجئة، استنتاجات الدرس، وحتى نصوص توجيهية للانتقال بين المحطات المعرفية. الهدف هو توظيف التقنية لتخفيف العبء عن الأستاذ وليس مضاعفته، وتسهيل الاستيعاب على التلميذ.
+
+المطلوب منك في هذه المرحلة (لا تقم بكتابة أي كود برمجي أو بناء الموقع):
+
+تقديم ملخص مقتضب جداً (في سطرين) يثبت استيعابك الدقيق للفكرة والهدف الوظيفي منها.
+
+بناءً على خبرتك في تصميم الويب التفاعلي والتقنيات التعليمية (EdTech)، قدم قائمة دقيقة ومفصلة تتضمن 20 ميزة أو إضافة تقنية مقترحة يمكن دمجها في واجهة وتجربة المستخدم (UI/UX) الخاصة بهذه الصفحة.
+
+شروط المقترحات الـ 20:
+
+أن تكون موجهة خصيصاً للعرض عبر جهاز الإسقاط (Data Show) حيث يتحكم الأستاذ ويتلقى التلميذ.
+
+أن تخدم أهدافاً محددة: تسريع الفهم، جذب الانتباه، إدارة الوقت بدقة، وتسهيل تحكم الأستاذ في سيرورة الدرس.
+
+أن تكون قابلة للتطبيق برمجياً في صفحات الويب المتقدمة.
+
+ضوابط الإجابة: التزم بأسلوب شديد الرسمية، منظم، ومرتب. استخدم لغة دقيقة خالية تماماً من المبالغة في التعبير أو الوصف. اطرح المقترحات في نقاط مرقمة وواضحة."
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://iyedcheesy.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b68d837f-68c7-40ef-8e85-858892962666).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +44,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
