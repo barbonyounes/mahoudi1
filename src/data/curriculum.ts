@@ -394,7 +394,73 @@ export const curriculum: CurriculumLevel[] = [
     id: "3am",
     title: "السنة الثالثة متوسط",
     short: "3 م",
-    segments: [],
+    segments: [
+      {
+        id: "3am-internal-dynamics",
+        order: 1,
+        title: "المقطع التعلمي الأول: الديناميكية الداخلية للكرة الأرضية",
+        field: "الإنسان والمحيط",
+        resources: [
+          {
+            id: "3am-id-r1",
+            order: 1,
+            title: "الزلازل",
+            plannedSessions: 2,
+            competence:
+              "وصف الزلزال كظاهرة طبيعية وتفسير أسبابه بربطها بالتشوهات الصخرية وحدود الصفائح.",
+            sessions: [
+              {
+                order: 1,
+                title: "الزلازل ظاهرة طبيعية",
+                lessonId: "eq-phenomenon",
+                status: "ready",
+                summary: "شهادات ميدانية، مكونات الزلزال، معطيات زلزال بومرداس وتصنيفها.",
+              },
+              {
+                order: 2,
+                title: "أسباب الزلازل",
+                lessonId: "eq-causes",
+                status: "ready",
+                summary: "قوى الانضغاط، الطيات والفوالق، والتوزيع العالمي للزلازل.",
+              },
+            ],
+          },
+          {
+            id: "3am-id-r2",
+            order: 2,
+            title: "البراكين",
+            plannedSessions: 1,
+            competence: "تحديد بنية البركان وأنماطه وربط النمط بطبيعة الصهارة.",
+            sessions: [
+              {
+                order: 1,
+                title: "النشاط البركاني وأنماط البراكين",
+                lessonId: "volcano-activity",
+                status: "ready",
+                summary: "البركان الانصبابي والانفجاري، بنية البركان، لزوجة الحمم.",
+              },
+            ],
+          },
+          {
+            id: "3am-id-r3",
+            order: 3,
+            title: "الغوص والظواهر المرافقة",
+            plannedSessions: 1,
+            competence:
+              "شرح ظاهرة الغوص وربطها بالخنادق المحيطية وتوزع بؤر الزلازل والبراكين وتشكل الجبال.",
+            sessions: [
+              {
+                order: 1,
+                title: "الغوص والظواهر الجيولوجية المرتبطة به",
+                lessonId: "subduction",
+                status: "ready",
+                summary: "خط بينيوف، الخنادق المحيطية، البراكين الانفجارية وتشكل الجبال.",
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: "4am",
