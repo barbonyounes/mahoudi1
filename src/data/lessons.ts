@@ -31,6 +31,10 @@ import { lessonInternalMilieu } from "@/data/lesson-internal-milieu";
 import { lessonFoodChains } from "@/data/lesson-food-chains";
 import { lessonEcosystemBalance } from "@/data/lesson-ecosystem-balance";
 import { lessonHumanImpact } from "@/data/lesson-human-impact";
+import { lessonEqPhenomenon } from "@/data/lesson-eq-phenomenon";
+import { lessonEqCauses } from "@/data/lesson-eq-causes";
+import { lessonVolcanoActivity } from "@/data/lesson-volcano-activity";
+import { lessonSubduction } from "@/data/lesson-subduction";
 import type { LessonDef } from "@/data/lesson";
 
 export const lessons: LessonDef[] = [
