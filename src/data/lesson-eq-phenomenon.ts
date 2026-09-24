@@ -1,4 +1,5 @@
 import type { LessonDef, Station, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonEqPhenomenon: LessonDef = {
   id: "eq-phenomenon",
@@ -31,6 +32,7 @@ export const lessonEqPhenomenon: LessonDef = {
         "اعرضي المعطيات بملء الشاشة في صمت، لا تسمّي أي مصطلح علمي. دوّني تساؤلات التلاميذ كما تُنطق.",
       keyPoints: ["ملاحظة معطيات حقيقية", "طرح التساؤل دون إجابة", "تدوين الإشكالية"],
       blocks: [
+        liveResources.earthquakeSimulator,
         {
           kind: "bullets",
           items: [

@@ -1,4 +1,5 @@
 import type { LessonDef, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonBloodCompo: LessonDef = {
   id: "blood-compo",
@@ -19,6 +20,7 @@ export const lessonBloodCompo: LessonDef = {
       teacherNote: "اعرضي الوضعية بملء الشاشة، ملاحظة صامتة أولاً، ثم اجمعي تساؤلات التلاميذ دون تصحيح.",
       keyPoints: ["ملاحظة صامتة", "صياغة الإشكالية", "لا إجابات في هذه المرحلة"],
       blocks: [
+        liveResources.bloodVideo,
         { kind: "text", text: "أنبوب دم مضاف إليه مانع للتخثّر بعد الطرد المركزي: يظهر سائل أصفر في الأعلى وطبقة رقيقة بيضاء في الوسط ورسابة حمراء في الأسفل. وتحليل البلازما بعد وجبة يظهر ارتفاع الغلوكوز." },
         { kind: "prompt", question: "ما مكوّنات الدم؟ وأي مكوّن ينقل المغذيات الممتصّة؟" },
         { kind: "bullets", items: ["ملاحظة صامتة للأنبوب والمعطيات.", "الإشكالية: ما تركيب الدم ودور كل مكوّن؟"] },

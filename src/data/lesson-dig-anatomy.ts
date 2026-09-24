@@ -1,4 +1,5 @@
 import type { LessonDef, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonDigAnatomy: LessonDef = {
   id: "dig-anatomy",
@@ -19,6 +20,7 @@ export const lessonDigAnatomy: LessonDef = {
       teacherNote: "اعرضي الوضعية بملء الشاشة، ملاحظة صامتة أولاً، ثم اجمعي تساؤلات التلاميذ دون تصحيح.",
       keyPoints: ["ملاحظة صامتة", "صياغة الإشكالية", "لا إجابات في هذه المرحلة"],
       blocks: [
+        liveResources.digestionVideo,
         { kind: "text", text: "رسم تشريحي للجهاز الهضمي: فم، بلعوم، مريء، معدة، معي دقيق، معي غليظ، شرج، وإلى جانبها غدد لعابية وكبد ومرارة وبنكرياس." },
         { kind: "prompt", question: "ما مسار الغذاء داخل الجسم؟ وما مصير كل من نواتج الهضم والفضلات؟" },
         { kind: "bullets", items: ["ملاحظة صامتة للرسم.", "الإشكالية: كيف تُنظَّم أعضاء الهضم ووظيفتها؟"] },
@@ -45,6 +47,7 @@ export const lessonDigAnatomy: LessonDef = {
       teacherNote: "لا تنتقلي قبل إعادة صياغة التعليمة من طرف تلميذين.",
       keyPoints: ["تحديد المهمة قبل الاستقصاء"],
       blocks: [
+        liveResources.digestiveSystemActivity,
         {
           kind: "task",
           title: "التعليمة",

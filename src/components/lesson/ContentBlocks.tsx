@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
-import { Check, X, Eye, Timer, PenLine } from "lucide-react";
+import { Check, X, Eye, Timer, PenLine, ExternalLink, Headphones, PlayCircle, FlaskConical } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Block, Term } from "@/data/lesson";
 import { cn } from "@/lib/utils";
 import { PermeabilityLab } from "@/components/lab/PermeabilityLab";
@@ -333,6 +334,63 @@ function OpenQuestion({ block }: { block: Extract<Block, { kind: "openQuestion" 
   );
 }
 
+function LiveResource({ block }: { block: Extract<Block, { kind: "liveResource" }> }) {
+  const [showEmbed, setShowEmbed] = useState(false);
+  const Icon = block.media === "audio" ? Headphones : block.media === "simulation" ? FlaskConical : PlayCircle;
+  const label = block.media === "audio" ? "وثيقة سمعية" : block.media === "simulation" ? "تجربة تفاعلية" : "فيديو علمي";
+
+  return (
+    <section className="overflow-hidden rounded-2xl border-2 border-primary/30 bg-secondary/30">
+      <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-start sm:p-7">
+        <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <Icon className="size-7" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-primary/15 px-3 py-1 text-sm font-bold text-primary">{label}</span>
+            {block.duration && <span className="text-sm text-muted-foreground">{block.duration}</span>}
+          </div>
+          <h3 className="mt-3 text-[1.35em] font-bold leading-snug">{block.title}</h3>
+          <p className="mt-2 text-[1em] leading-relaxed text-foreground/80">{block.description}</p>
+          <div className="mt-4 rounded-xl border border-warning/50 bg-warning/15 p-4">
+            <p className="text-sm font-bold text-warning-foreground">تعليمة المشاهدة</p>
+            <p className="mt-1 leading-relaxed">{block.instruction}</p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {block.embedUrl && (
+              <Button type="button" size="lg" onClick={() => setShowEmbed((value) => !value)}>
+                <PlayCircle /> {showEmbed ? "إغلاق العرض" : "عرض داخل الحصة"}
+              </Button>
+            )}
+            <Button asChild variant="outline" size="lg">
+              <a href={block.sourceUrl} target="_blank" rel="noreferrer">
+                <ExternalLink /> فتح من المصدر
+              </a>
+            </Button>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">المصدر: {block.source}</p>
+        </div>
+      </div>
+      {showEmbed && block.embedUrl && (
+        <div className="border-t-2 border-border bg-background p-2 sm:p-4">
+          <iframe
+            src={block.embedUrl}
+            title={block.title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="aspect-video w-full rounded-xl border border-border bg-secondary"
+          />
+          <p className="px-2 pt-3 text-sm text-muted-foreground">
+            إذا منع المصدر العرض هنا، استخدم زر «فتح من المصدر».
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function BlockView({
   block,
   terms,
@@ -454,6 +512,9 @@ export function BlockView({
           )}
         </figure>
       );
+
+    case "liveResource":
+      return <LiveResource block={block} />;
 
     case "task":
       return <TaskBlock block={block} />;

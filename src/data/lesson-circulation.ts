@@ -1,4 +1,5 @@
 import type { LessonDef, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonCirculation: LessonDef = {
   id: "circulation",
@@ -19,6 +20,7 @@ export const lessonCirculation: LessonDef = {
       teacherNote: "اعرضي الوضعية بملء الشاشة، ملاحظة صامتة أولاً، ثم اجمعي تساؤلات التلاميذ دون تصحيح.",
       keyPoints: ["ملاحظة صامتة", "صياغة الإشكالية", "لا إجابات في هذه المرحلة"],
       blocks: [
+        liveResources.circulationVideo,
         { kind: "text", text: "رسم تخطيطي: دم فقير بالأكسجين يخرج من القلب الأيمن نحو الرئتين ويعود غنياً بالأكسجين إلى القلب الأيسر الذي يدفعه نحو جميع الأعضاء." },
         { kind: "prompt", question: "كيف تصل المغذيات والأكسجين إلى كل خلايا الجسم؟" },
         { kind: "bullets", items: ["ملاحظة صامتة للرسم.", "الإشكالية: كيف تُنظَّم الدورة الدموية؟"] },
