@@ -1,4 +1,5 @@
 import type { LessonDef, Station, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonVolcanoActivity: LessonDef = {
   id: "volcano-activity",
@@ -31,6 +32,7 @@ export const lessonVolcanoActivity: LessonDef = {
       teacherNote: "اعرضي المعطيات في صمت بملء الشاشة دون تسمية أي نمط، ودوّني تساؤلات التلاميذ.",
       keyPoints: ["ملاحظة التباين بين بركانين", "طرح التساؤل", "تدوين الإشكالية"],
       blocks: [
+        liveResources.volcanoVideo,
         {
           kind: "bullets",
           items: [
@@ -62,6 +64,7 @@ export const lessonVolcanoActivity: LessonDef = {
       teacherNote: "دوّني الفرضيات واحتفظي بها للمصادقة في المحطة 5. لا تصحيح الآن.",
       keyPoints: ["تفسيرات مؤقتة لاختلاف أنماط البراكين"],
       blocks: [
+        liveResources.lavaSimulator,
         {
           kind: "hypotheses",
           title: "فرضيات القسم",

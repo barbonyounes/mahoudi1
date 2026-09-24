@@ -1,4 +1,5 @@
 import type { LessonDef, Station, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonSubduction: LessonDef = {
   id: "subduction",
@@ -30,6 +31,7 @@ export const lessonSubduction: LessonDef = {
       teacherNote: "اعرضي المعطيات في صمت بملء الشاشة دون تسمية «الغوص»، ودوّني تساؤلات التلاميذ.",
       keyPoints: ["مفارقة تمدد قاع المحيط وثبات حجم الأرض", "طرح التساؤل", "تدوين الإشكالية"],
       blocks: [
+        liveResources.subductionSimulation,
         {
           kind: "bullets",
           items: [
