@@ -28,6 +28,17 @@ export type Block =
   | { kind: "writing"; title: string; minutes: number; sentences: string[] }
   | { kind: "openQuestion"; question: string; expected: string }
   | { kind: "video"; title: string; src: string; caption?: string }
+  | {
+      kind: "liveResource";
+      media: "video" | "audio" | "simulation";
+      title: string;
+      source: string;
+      sourceUrl: string;
+      embedUrl?: string;
+      description: string;
+      instruction: string;
+      duration?: string;
+    }
   /** محطة التعليمة: تحديد المهمة بدقة قبل الاستقصاء */
   | {
       kind: "task";
