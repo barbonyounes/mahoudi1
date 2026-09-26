@@ -13,6 +13,8 @@ export type CurriculumSession = {
   status: SessionStatus;
   /** ملخص قصير لما تعالجه الحصة */
   summary: string;
+  /** في نسخة الأستاذ: معرّف الحصة الأصلية التي نُسخت منها، لتمكين الاسترجاع */
+  originalLessonId?: string;
 };
 
 /** مورد معرفي (درس) داخل مقطع تعلمي */
