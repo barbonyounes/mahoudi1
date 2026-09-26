@@ -15,6 +15,13 @@
       "when": 1790413159301,
       "tag": "0001_secure_teacher_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790415945538,
+      "tag": "0002_teacher_cloud_sync",
+      "breakpoints": true
     }
   ]
 }
