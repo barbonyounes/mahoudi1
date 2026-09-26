@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Maximize2, X } from "lucide-react";
 import { usePrefs } from "@/hooks/usePrefs";
+import { useTeacherView } from "@/hooks/useTeacherView";
 import { getLessonById } from "@/data/lessons";
 import { useLessonSession } from "@/hooks/useLessonSession";
 import { useTheme } from "@/hooks/useTheme";
@@ -51,7 +52,9 @@ export const Route = createFileRoute("/lesson/$lessonId")({
 });
 
 function LessonPage() {
-  const { lesson } = Route.useLoaderData();
+  const { lesson: fallback } = Route.useLoaderData();
+  const { workspace } = useTeacherView();
+  const lesson = workspace?.lessons.find((l) => l.id === fallback.id) ?? fallback;
   const s = useLessonSession(lesson);
   const { theme, cycleTheme } = useTheme();
   const glossary = useGlossary();

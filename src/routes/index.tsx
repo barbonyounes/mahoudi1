@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, CheckCircle2, Settings } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, PenLine, Settings } from "lucide-react";
 import { curriculum, countReadySessions, countTotalSessions } from "@/data/curriculum";
 
 export const Route = createFileRoute("/")({
@@ -32,14 +32,24 @@ function LevelChooser() {
           <p className="text-sm font-semibold tracking-[0.2em] text-primary sm:text-base">
             علوم الطبيعة والحياة — التعليم المتوسط
           </p>
-          <Link
-            to="/settings"
-            aria-label="الإعدادات — المستويات والأقسام والتلاميذ"
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl border-2 border-border px-4 py-2.5 text-sm font-bold transition hover:border-primary hover:bg-primary/5"
-          >
-            <Settings className="size-5" />
-            <span className="hidden sm:inline">الإعدادات</span>
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/teacher"
+              aria-label="مساحة الأستاذ — تخصيص الحصص"
+              className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition hover:opacity-90"
+            >
+              <PenLine className="size-5" />
+              <span className="hidden sm:inline">مساحة الأستاذ</span>
+            </Link>
+            <Link
+              to="/settings"
+              aria-label="الإعدادات — المستويات والأقسام والتلاميذ"
+              className="inline-flex shrink-0 items-center gap-2 rounded-2xl border-2 border-border px-4 py-2.5 text-sm font-bold transition hover:border-primary hover:bg-primary/5"
+            >
+              <Settings className="size-5" />
+              <span className="hidden sm:inline">الإعدادات</span>
+            </Link>
+          </div>
         </div>
 
         <h1 className="mt-3 text-[clamp(1.8rem,5vw,3.2rem)] font-bold leading-tight">

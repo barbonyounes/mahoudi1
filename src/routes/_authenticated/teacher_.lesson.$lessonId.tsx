@@ -11,7 +11,7 @@ import { useTeacherWorkspace } from "@/hooks/useTeacherWorkspace";
 import { blankStation, moveItem, uid } from "@/components/teacher/workspace-utils";
 import type { Block, LessonDef, Station, Term } from "@/data/lesson";
 
-export const Route = createFileRoute("/teacher/lesson/$lessonId")({
+export const Route = createFileRoute("/_authenticated/teacher_/lesson/$lessonId")({
   head: () => ({
     meta: [
       { title: "محرر الحصة — مساحة الأستاذ" },
