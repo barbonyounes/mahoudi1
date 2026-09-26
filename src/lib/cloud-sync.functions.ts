@@ -4,6 +4,10 @@ import { z } from "zod";
 const BUCKET = "teacher-sync-media";
 const keySchema = z.string().trim().min(16).max(128);
 const idSchema = z.string().regex(/^[\w-]{8,64}$/);
+const workspaceSchema = z.object({
+  curriculum: z.array(z.unknown()),
+  lessons: z.array(z.unknown()),
+});
 
 async function hashKey(key: string) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
@@ -15,7 +19,7 @@ export const pushWorkspace = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z.object({
       syncKey: keySchema,
-      workspace: z.object({ curriculum: z.array(z.unknown()), lessons: z.array(z.unknown()) }),
+      workspace: workspaceSchema,
       mediaIds: z.array(idSchema).max(500),
     }).parse(d),
   )
@@ -51,5 +55,6 @@ export const pullWorkspace = createServerFn({ method: "POST" })
       const { data: s } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(`${h}/${f.name}`, 3600);
       if (s) media.push({ id: f.name, url: s.signedUrl });
     }
-    return { found: true as const, workspace: row.workspace as unknown, updatedAt: row.updated_at, media };
+    const validated = workspaceSchema.parse(row.workspace);
+    return { found: true as const, workspaceJson: JSON.stringify(validated), updatedAt: row.updated_at, media };
   });

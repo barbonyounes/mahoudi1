@@ -462,6 +462,30 @@ export const curriculum: CurriculumLevel[] = [
           },
         ],
       },
+      {
+        id: "3am-external-dynamics",
+        order: 2,
+        title: "المقطع التعلمي الثاني: الديناميكية الخارجية للكرة الأرضية",
+        field: "الإنسان والمحيط",
+        resources: [
+          {
+            id: "3am-ed-r1",
+            order: 1,
+            title: "التجوية والتعرية",
+            plannedSessions: 1,
+            competence: "تفسير تحول المناظر الطبيعية بفعل التجوية والتعرية وربط النقل بطبيعة العامل وسرعته.",
+            sessions: [
+              {
+                order: 1,
+                title: "التجوية والتعرية ونقل الفتات الصخري",
+                lessonId: "weathering-erosion",
+                status: "ready",
+                summary: "تفكك الصخور في مكانها، اقتلاع ونقل الفتات، وفرز الرواسب عند تناقص طاقة العامل الناقل.",
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
   {

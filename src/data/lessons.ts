@@ -35,6 +35,7 @@ import { lessonEqPhenomenon } from "@/data/lesson-eq-phenomenon";
 import { lessonEqCauses } from "@/data/lesson-eq-causes";
 import { lessonVolcanoActivity } from "@/data/lesson-volcano-activity";
 import { lessonSubduction } from "@/data/lesson-subduction";
+import { lessonWeatheringErosion } from "@/data/lesson-weathering-erosion";
 import type { LessonDef } from "@/data/lesson";
 
 export const lessons: LessonDef[] = [
@@ -75,6 +76,7 @@ export const lessons: LessonDef[] = [
   lessonEqCauses,
   lessonVolcanoActivity,
   lessonSubduction,
+  lessonWeatheringErosion,
 ];
 
 export function getLessonById(id: string): LessonDef | undefined {

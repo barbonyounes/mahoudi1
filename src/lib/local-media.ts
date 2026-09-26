@@ -6,7 +6,7 @@ const store = () => createStore("svt-teacher-media", "files");
 export const MEDIA_PREFIX = "idb:";
 export const MAX_MEDIA_BYTES = 200 * 1024 * 1024;
 
-export async function saveLocalMedia(file: Blob, id = crypto.randomUUID()): Promise<string> {
+export async function saveLocalMedia(file: Blob, id: string = crypto.randomUUID()): Promise<string> {
   await set(id, file, store());
   return id;
 }

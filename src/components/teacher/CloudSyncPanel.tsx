@@ -64,7 +64,7 @@ export function CloudSyncPanel({ draft }: { draft: WorkspaceDraft }) {
         const r = await fetch(m.url);
         if (r.ok) await saveLocalMedia(await r.blob(), m.id);
       }
-      localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(res.workspace));
+      localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(JSON.parse(res.workspaceJson) as WorkspaceDraft));
       markSynced();
       toast.success("تم جلب المساحة من السحابة");
       setTimeout(() => window.location.reload(), 600);
