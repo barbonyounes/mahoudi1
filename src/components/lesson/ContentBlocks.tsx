@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import { Check, X, Eye, Timer, PenLine, ExternalLink, Headphones, PlayCircle, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,20 @@ import {
 import { RelationExplorerBlock } from "@/components/lesson/RelationBlocks";
 import { BurnLabBlock } from "@/components/lesson/NutritionBlocks";
 import { useGlossary } from "@/components/lesson/Glossary";
+import { supabase } from "@/integrations/supabase/client";
+
+function UploadedFile({ block }: { block: Extract<Block, { kind: "uploadedFile" }> }) {
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    let active = true;
+    void supabase.storage.from("teacher-documents").createSignedUrl(block.storagePath, 3600).then(({ data }) => {
+      if (active) setUrl(data?.signedUrl ?? "");
+    });
+    return () => { active = false; };
+  }, [block.storagePath]);
+  if (!url) return <p className="rounded-2xl bg-secondary p-5 text-muted-foreground">جارٍ تحميل الوثيقة الخاصة…</p>;
+  return <figure className="space-y-3"><figcaption className="text-xl font-bold text-primary">{block.title}</figcaption>{block.media === "image" ? <img src={url} alt={block.title} className="max-h-[65vh] w-full rounded-2xl object-contain" /> : block.media === "video" ? <video src={url} controls className="w-full rounded-2xl" /> : block.media === "audio" ? <audio src={url} controls className="w-full" /> : <iframe src={url} title={block.title} className="h-[65vh] w-full rounded-2xl border border-border" />}{block.caption && <p className="text-muted-foreground">{block.caption}</p>}</figure>;
+}
 
 /** نص مع مصطلحات علمية قابلة للنقر — تفتح نافذة القاموس على التعريف المطابق */
 function TermText({ text, terms }: { text: string; terms: Term[] }) {
@@ -515,6 +529,9 @@ export function BlockView({
 
     case "liveResource":
       return <LiveResource block={block} />;
+
+    case "uploadedFile":
+      return <UploadedFile block={block} />;
 
     case "task":
       return <TaskBlock block={block} />;
