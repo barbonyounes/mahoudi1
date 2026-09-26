@@ -5,6 +5,7 @@ import { Maximize2, X } from "lucide-react";
 import { usePrefs } from "@/hooks/usePrefs";
 import { useTeacherView } from "@/hooks/useTeacherView";
 import { getLessonById } from "@/data/lessons";
+import type { LessonDef } from "@/data/lesson";
 import { useLessonSession } from "@/hooks/useLessonSession";
 import { useTheme } from "@/hooks/useTheme";
 import { ThreeBackground } from "@/components/three/ThreeBackground";
