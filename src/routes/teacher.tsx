@@ -30,7 +30,7 @@ import { lessons as defaultLessons } from "@/data/lessons";
 import type { CurriculumLevel, CurriculumResource, CurriculumSegment, CurriculumSession } from "@/data/curriculum";
 import type { LessonDef } from "@/data/lesson";
 
-export const Route = createFileRoute("/_authenticated/teacher")({
+export const Route = createFileRoute("/teacher")({
   head: () => ({
     meta: [
       { title: "مساحة الأستاذ — إدارة المقاطع والموارد والحصص" },
@@ -192,7 +192,7 @@ function TeacherLibrary() {
         </div>
         <h1 className="mt-3 text-3xl font-bold text-primary">مساحة الأستاذ</h1>
         <p className="mt-2 text-muted-foreground">
-          نظّم مقاطعك ومواردك، وانسخ الحصص الجاهزة وحرّرها. التعديلات تُحفظ تلقائياً في حسابك ولا تظهر إلا لك.
+          نظّم مقاطعك ومواردك، وانسخ الحصص الجاهزة وحرّرها. التعديلات تُحفظ تلقائياً في هذا المتصفح ولا تظهر إلا هنا.
         </p>
 
         <div className="mt-6 flex gap-2">
