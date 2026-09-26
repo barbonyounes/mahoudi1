@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      teacher_cloud_sync: {
+        Row: {
+          key_hash: string
+          updated_at: string
+          workspace: Json
+        }
+        Insert: {
+          key_hash: string
+          updated_at?: string
+          workspace: Json
+        }
+        Update: {
+          key_hash?: string
+          updated_at?: string
+          workspace?: Json
+        }
+        Relationships: []
+      }
       teacher_workspaces: {
         Row: {
           curriculum: Json

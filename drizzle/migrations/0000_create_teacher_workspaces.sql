@@ -1,4 +1,4 @@
-CREATE TABLE public.teacher_workspaces (
+CREATE TABLE IF NOT EXISTS public.teacher_workspaces (
   user_id uuid PRIMARY KEY,
   curriculum jsonb NOT NULL DEFAULT '[]'::jsonb,
   lessons jsonb NOT NULL DEFAULT '[]'::jsonb,
@@ -9,17 +9,21 @@ CREATE TABLE public.teacher_workspaces (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.teacher_workspaces TO authenticated;
 GRANT ALL ON public.teacher_workspaces TO service_role;
 ALTER TABLE public.teacher_workspaces ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Teachers can read their workspace" ON public.teacher_workspaces;
 CREATE POLICY "Teachers can read their workspace"
 ON public.teacher_workspaces FOR SELECT TO authenticated
 USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Teachers can create their workspace" ON public.teacher_workspaces;
 CREATE POLICY "Teachers can create their workspace"
 ON public.teacher_workspaces FOR INSERT TO authenticated
 WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Teachers can update their workspace" ON public.teacher_workspaces;
 CREATE POLICY "Teachers can update their workspace"
 ON public.teacher_workspaces FOR UPDATE TO authenticated
 USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Teachers can delete their workspace" ON public.teacher_workspaces;
 CREATE POLICY "Teachers can delete their workspace"
 ON public.teacher_workspaces FOR DELETE TO authenticated
 USING (auth.uid() = user_id);
-CREATE INDEX teacher_workspaces_updated_at_idx ON public.teacher_workspaces(updated_at DESC);
+CREATE INDEX IF NOT EXISTS teacher_workspaces_updated_at_idx ON public.teacher_workspaces(updated_at DESC);

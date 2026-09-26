@@ -27,20 +27,34 @@ import { RelationExplorerBlock } from "@/components/lesson/RelationBlocks";
 import { BurnLabBlock } from "@/components/lesson/NutritionBlocks";
 import { useGlossary } from "@/components/lesson/Glossary";
 import { supabase } from "@/integrations/supabase/client";
+import { getLocalMedia, MEDIA_PREFIX } from "@/lib/local-media";
 
 function UploadedFile({ block }: { block: Extract<Block, { kind: "uploadedFile" }> }) {
   const [url, setUrl] = useState("");
+  const [missing, setMissing] = useState(false);
   useEffect(() => {
+    setMissing(false);
     if (block.storagePath.startsWith("data:")) {
       setUrl(block.storagePath);
       return;
     }
     let active = true;
+    if (block.storagePath.startsWith(MEDIA_PREFIX)) {
+      let objectUrl = "";
+      void getLocalMedia(block.storagePath.slice(MEDIA_PREFIX.length)).then((blob) => {
+        if (!active) return;
+        if (!blob) { setMissing(true); return; }
+        objectUrl = URL.createObjectURL(blob);
+        setUrl(objectUrl);
+      });
+      return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+    }
     void supabase.storage.from("teacher-documents").createSignedUrl(block.storagePath, 3600).then(({ data }) => {
       if (active) setUrl(data?.signedUrl ?? "");
     });
     return () => { active = false; };
   }, [block.storagePath]);
+  if (missing) return <p className="rounded-2xl bg-secondary p-5 text-muted-foreground">هذه الوثيقة غير موجودة على هذا الجهاز — اجلبها من السحابة في مساحة الأستاذ.</p>;
   if (!url) return <p className="rounded-2xl bg-secondary p-5 text-muted-foreground">جارٍ تحميل الوثيقة الخاصة…</p>;
   return <figure className="space-y-3"><figcaption className="text-xl font-bold text-primary">{block.title}</figcaption>{block.media === "image" ? <img src={url} alt={block.title} className="max-h-[65vh] w-full rounded-2xl object-contain" /> : block.media === "video" ? <video src={url} controls className="w-full rounded-2xl" /> : block.media === "audio" ? <audio src={url} controls className="w-full" /> : <iframe src={url} title={block.title} className="h-[65vh] w-full rounded-2xl border border-border" />}{block.caption && <p className="text-muted-foreground">{block.caption}</p>}</figure>;
 }

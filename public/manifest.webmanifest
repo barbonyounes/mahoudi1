@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "علوم الطبيعة والحياة — المتوسط",
+  "short_name": "علوم الطبيعة",
+  "description": "حصص تفاعلية لعلوم الطبيعة والحياة للسنتين الثالثة والرابعة متوسط، تعمل بدون إنترنت.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#12402a",
+  "theme_color": "#12402a",
+  "categories": ["education"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "مساحة الأستاذ", "url": "/teacher", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "السنة الرابعة", "url": "/level/4am" },
+    { "name": "السنة الثالثة", "url": "/level/3am" }
+  ]
+}
