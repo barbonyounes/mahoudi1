@@ -15,7 +15,9 @@ export const pushWorkspace = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z.object({
       syncKey: keySchema,
-      workspace: z.object({ curriculum: z.array(z.unknown()), lessons: z.array(z.unknown()) }),
+const workspaceSchema = z.object({ curriculum: z.array(z.unknown()), lessons: z.array(z.unknown()) });
+
+
       mediaIds: z.array(idSchema).max(500),
     }).parse(d),
   )
