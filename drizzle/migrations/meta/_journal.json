@@ -8,6 +8,13 @@
       "when": 1790328751614,
       "tag": "0000_create_teacher_workspaces",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790413159301,
+      "tag": "0001_secure_teacher_documents",
+      "breakpoints": true
     }
   ]
 }
