@@ -31,6 +31,10 @@ import { supabase } from "@/integrations/supabase/client";
 function UploadedFile({ block }: { block: Extract<Block, { kind: "uploadedFile" }> }) {
   const [url, setUrl] = useState("");
   useEffect(() => {
+    if (block.storagePath.startsWith("data:")) {
+      setUrl(block.storagePath);
+      return;
+    }
     let active = true;
     void supabase.storage.from("teacher-documents").createSignedUrl(block.storagePath, 3600).then(({ data }) => {
       if (active) setUrl(data?.signedUrl ?? "");

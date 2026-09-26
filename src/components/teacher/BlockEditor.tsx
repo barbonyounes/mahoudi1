@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BlockView } from "@/components/lesson/ContentBlocks";
-import { supabase } from "@/integrations/supabase/client";
 import type { Block, Term } from "@/data/lesson";
 import { Field, LinesField, TextField } from "./EditorFields";
 
@@ -41,29 +40,26 @@ export function BlockEditor({ block, terms, onChange, onDelete, onDuplicate, onM
       toast.error("نوع الملف غير مدعوم");
       return;
     }
-    if (file.size > 50 * 1024 * 1024) {
-      toast.error("حجم الملف يتجاوز 50 ميغابايت");
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("حجم الملف يتجاوز 3 ميغابايت (حد التخزين المحلي في المتصفح)");
       return;
     }
     setUploading(true);
-    const { data: user } = await supabase.auth.getUser();
-    const uid = user.user?.id;
-    if (!uid) {
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("read failed"));
+        reader.readAsDataURL(file);
+      });
+      const media = file.type === "application/pdf" ? "pdf" : file.type.split("/")[0] as "image" | "video" | "audio";
+      onChange({ kind: "uploadedFile", media, title: file.name, storagePath: dataUrl });
+      toast.success("تمت إضافة الوثيقة");
+    } catch {
+      toast.error("تعذّرت قراءة الوثيقة");
+    } finally {
       setUploading(false);
-      toast.error("سجّل الدخول أولاً");
-      return;
     }
-    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-    const path = `${uid}/${lessonId}/${crypto.randomUUID()}-${safe}`;
-    const { error } = await supabase.storage.from("teacher-documents").upload(path, file);
-    setUploading(false);
-    if (error) {
-      toast.error("تعذّر رفع الوثيقة");
-      return;
-    }
-    const media = file.type === "application/pdf" ? "pdf" : file.type.split("/")[0] as "image" | "video" | "audio";
-    onChange({ kind: "uploadedFile", media, title: file.name, storagePath: path });
-    toast.success("تم رفع الوثيقة");
   };
   return <div className="rounded-2xl border border-border bg-background p-4">
     <div className="flex flex-wrap items-center gap-2">
