@@ -30,7 +30,7 @@ import { lessons as defaultLessons } from "@/data/lessons";
 import type { CurriculumLevel, CurriculumResource, CurriculumSegment, CurriculumSession } from "@/data/curriculum";
 import type { LessonDef } from "@/data/lesson";
 
-export const Route = createFileRoute("/teacher")({
+export const Route = createFileRoute("/_authenticated/teacher")({
   head: () => ({
     meta: [
       { title: "مساحة الأستاذ — إدارة المقاطع والموارد والحصص" },
@@ -80,12 +80,12 @@ function TeacherLibrary() {
     levelId: string,
     segId: string,
     resId: string,
-    sessionId: string,
+    sesIndex: number,
     fn: (s: CurriculumSession) => CurriculumSession,
   ) =>
     mapResource(levelId, segId, resId, (r) => ({
       ...r,
-      sessions: r.sessions.map((s) => (s.lessonId === sessionId || s.order === sessionId ? fn(s) : s)),
+      sessions: r.sessions.map((s, i) => (i === sesIndex ? fn(s) : s)),
     }));
 
   const addLessonToResource = (segId: string, resId: string, lesson: LessonDef, originalLessonId?: string) => {
@@ -294,7 +294,7 @@ function TeacherLibrary() {
                                   <Button size="icon" variant="ghost" aria-label="معاينة الحصة" asChild><Link to="/lesson/$lessonId" params={{ lessonId: session.lessonId }} target="_blank"><ExternalLink className="size-4" /></Link></Button>
                                 </>
                               )}
-                              <Button size="icon" variant="ghost" aria-label={session.status === "ready" ? "تحويل إلى مسودة" : "جاهزة للعرض"} onClick={() => mapSession(level.id, segment.id, resource.id, session.lessonId ?? session.title, (x) => ({ ...x, status: x.status === "ready" ? "planned" : "ready" }))}>
+                              <Button size="icon" variant="ghost" aria-label={session.status === "ready" ? "تحويل إلى مسودة" : "جاهزة للعرض"} onClick={() => mapSession(level.id, segment.id, resource.id, sesIndex, (x) => ({ ...x, status: x.status === "ready" ? "planned" : "ready" }))}>
                                 {session.status === "ready" ? <FilePlus2 className="size-4" /> : <Pencil className="size-4" />}
                               </Button>
                               {session.originalLessonId && (

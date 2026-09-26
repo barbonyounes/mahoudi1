@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as AuthenticatedTeacherRouteImport } from './routes/_authenticated/teacher'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as LevelLevelIdRouteImport } from './routes/level.$levelId'
 
@@ -19,10 +22,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTeacherRoute = AuthenticatedTeacherRouteImport.update({
+  id: '/teacher',
+  path: '/teacher',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
   id: '/lesson/$lessonId',
@@ -37,33 +54,62 @@ const LevelLevelIdRoute = LevelLevelIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/settings': typeof SettingsRoute
+  '/teacher': typeof AuthenticatedTeacherRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/level/$levelId': typeof LevelLevelIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/settings': typeof SettingsRoute
+  '/teacher': typeof AuthenticatedTeacherRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/level/$levelId': typeof LevelLevelIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/settings': typeof SettingsRoute
+  '/_authenticated/teacher': typeof AuthenticatedTeacherRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/level/$levelId': typeof LevelLevelIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/lesson/$lessonId' | '/level/$levelId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/settings'
+    | '/teacher'
+    | '/lesson/$lessonId'
+    | '/level/$levelId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/lesson/$lessonId' | '/level/$levelId'
-  id: '__root__' | '/' | '/settings' | '/lesson/$lessonId' | '/level/$levelId'
+  to:
+    | '/'
+    | '/auth'
+    | '/settings'
+    | '/teacher'
+    | '/lesson/$lessonId'
+    | '/level/$levelId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/settings'
+    | '/_authenticated/teacher'
+    | '/lesson/$lessonId'
+    | '/level/$levelId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   SettingsRoute: typeof SettingsRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
   LevelLevelIdRoute: typeof LevelLevelIdRoute
@@ -78,12 +124,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/teacher': {
+      id: '/_authenticated/teacher'
+      path: '/teacher'
+      fullPath: '/teacher'
+      preLoaderRoute: typeof AuthenticatedTeacherRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/lesson/$lessonId': {
       id: '/lesson/$lessonId'
@@ -102,8 +169,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedTeacherRoute: typeof AuthenticatedTeacherRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedTeacherRoute: AuthenticatedTeacherRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   SettingsRoute: SettingsRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
   LevelLevelIdRoute: LevelLevelIdRoute,
