@@ -37,17 +37,30 @@ export function BlockEditor({ block, terms, onChange, onDelete, onDuplicate, onM
   const upload = async (file?: File) => {
     if (!file) return;
     const allowed = ["image/", "video/", "audio/", "application/pdf"];
-    if (!allowed.some((type) => file.type.startsWith(type))) return toast.error("نوع الملف غير مدعوم");
-    if (file.size > 50 * 1024 * 1024) return toast.error("حجم الملف يتجاوز 50 ميغابايت");
+    if (!allowed.some((type) => file.type.startsWith(type))) {
+      toast.error("نوع الملف غير مدعوم");
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("حجم الملف يتجاوز 50 ميغابايت");
+      return;
+    }
     setUploading(true);
     const { data: user } = await supabase.auth.getUser();
     const uid = user.user?.id;
-    if (!uid) { setUploading(false); return toast.error("سجّل الدخول أولاً"); }
+    if (!uid) {
+      setUploading(false);
+      toast.error("سجّل الدخول أولاً");
+      return;
+    }
     const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
     const path = `${uid}/${lessonId}/${crypto.randomUUID()}-${safe}`;
     const { error } = await supabase.storage.from("teacher-documents").upload(path, file);
     setUploading(false);
-    if (error) return toast.error("تعذّر رفع الوثيقة");
+    if (error) {
+      toast.error("تعذّر رفع الوثيقة");
+      return;
+    }
     const media = file.type === "application/pdf" ? "pdf" : file.type.split("/")[0] as "image" | "video" | "audio";
     onChange({ kind: "uploadedFile", media, title: file.name, storagePath: path });
     toast.success("تم رفع الوثيقة");
