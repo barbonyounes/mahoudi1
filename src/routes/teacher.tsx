@@ -30,7 +30,7 @@ import { lessons as defaultLessons } from "@/data/lessons";
 import type { CurriculumLevel, CurriculumResource, CurriculumSegment, CurriculumSession } from "@/data/curriculum";
 import type { LessonDef } from "@/data/lesson";
 
-export const Route = createFileRoute("/_authenticated/teacher")({
+export const Route = createFileRoute("/teacher")({
   head: () => ({
     meta: [
       { title: "مساحة الأستاذ — إدارة المقاطع والموارد والحصص" },
