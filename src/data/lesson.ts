@@ -29,6 +29,13 @@ export type Block =
   | { kind: "openQuestion"; question: string; expected: string }
   | { kind: "video"; title: string; src: string; caption?: string }
   | {
+      kind: "uploadedFile";
+      media: "image" | "video" | "audio" | "pdf";
+      title: string;
+      storagePath: string;
+      caption?: string;
+    }
+  | {
       kind: "liveResource";
       media: "video" | "audio" | "simulation";
       title: string;
