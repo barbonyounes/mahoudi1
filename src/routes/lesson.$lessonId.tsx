@@ -1,4 +1,4 @@
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Maximize2, X } from "lucide-react";
@@ -24,18 +24,15 @@ import {
 } from "@/components/lesson/Overlays";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
-  loader: ({ params }) => {
-    const lesson = getLessonById(params.lessonId);
-    if (!lesson) throw notFound();
-    return { lesson };
-  },
+  // نُعيد null بدل notFound حتى تُفتح حصص الأستاذ المخصّصة (معرّفاتها غير معروفة في الخادم)
+  loader: ({ params }) => ({ lesson: getLessonById(params.lessonId) ?? null }),
   head: ({ loaderData }) => {
-    if (!loaderData) {
+    const lesson = loaderData?.lesson;
+    if (!lesson) {
       return {
         meta: [{ title: "الحصة غير متوفرة" }, { name: "robots", content: "noindex" }],
       };
     }
-    const { lesson } = loaderData;
     const description = `حصة رقمية تفاعلية — ${lesson.title} (${lesson.level})، ${lesson.stations.length} محطات بيداغوجية مع مؤقت زمني وأدوات القسم.`;
     return {
       meta: [
@@ -54,7 +51,25 @@ export const Route = createFileRoute("/lesson/$lessonId")({
 function LessonPage() {
   const { lesson: fallback } = Route.useLoaderData();
   const { workspace } = useTeacherView();
-  const lesson = workspace?.lessons.find((l) => l.id === fallback.id) ?? fallback;
+  const lesson = workspace?.lessons.find((l) => l.id === fallback?.id) ?? fallback;
+  if (!lesson) {
+    return (
+      <div dir="rtl" className="grid min-h-dvh place-items-center bg-background px-4 text-center">
+        <div>
+          <p className="rounded-3xl border-2 border-dashed border-border p-8 text-lg">
+            لم يتم العثور على هذه الحصة.
+          </p>
+          <a href="/" className="mt-4 inline-block rounded-2xl bg-primary px-6 py-3 font-bold text-primary-foreground">
+            العودة إلى الرئيسية
+          </a>
+        </div>
+      </div>
+    );
+  }
+  return <LessonStage lesson={lesson} />;
+}
+
+function LessonStage({ lesson }: { lesson: LessonDef }) {
   const s = useLessonSession(lesson);
   const { theme, cycleTheme } = useTheme();
   const glossary = useGlossary();

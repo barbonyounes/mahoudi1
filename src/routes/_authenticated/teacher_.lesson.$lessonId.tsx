@@ -56,8 +56,25 @@ function LessonEditorPage() {
     );
   }
 
+  // مزامنة عنوان الحصة مع بطاقاتها في مقاطع المستوى
   const patchLesson = (patch: Partial<LessonDef>) =>
-    update((d) => ({ ...d, lessons: d.lessons.map((l) => (l.id === lessonId ? { ...l, ...patch } : l)) }));
+    update((d) => ({
+      ...d,
+      lessons: d.lessons.map((l) => (l.id === lessonId ? { ...l, ...patch } : l)),
+      curriculum:
+        patch.title === undefined
+          ? d.curriculum
+          : d.curriculum.map((lvl) => ({
+              ...lvl,
+              segments: lvl.segments.map((seg) => ({
+                ...seg,
+                resources: seg.resources.map((res) => ({
+                  ...res,
+                  sessions: res.sessions.map((ses) => (ses.lessonId === lessonId ? { ...ses, title: patch.title! } : ses)),
+                })),
+              })),
+            })),
+    }));
   const setStations = (stations: Station[]) => patchLesson({ stations });
 
   const stationOps = {
