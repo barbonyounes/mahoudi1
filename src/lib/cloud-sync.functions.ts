@@ -4,6 +4,10 @@ import { z } from "zod";
 const BUCKET = "teacher-sync-media";
 const keySchema = z.string().trim().min(16).max(128);
 const idSchema = z.string().regex(/^[\w-]{8,64}$/);
+const workspaceSchema = z.object({
+  curriculum: z.array(z.unknown()),
+  lessons: z.array(z.unknown()),
+});
 
 async function hashKey(key: string) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
@@ -15,9 +19,7 @@ export const pushWorkspace = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z.object({
       syncKey: keySchema,
-const workspaceSchema = z.object({ curriculum: z.array(z.unknown()), lessons: z.array(z.unknown()) });
-
-
+      workspace: workspaceSchema,
       mediaIds: z.array(idSchema).max(500),
     }).parse(d),
   )
@@ -26,7 +28,7 @@ const workspaceSchema = z.object({ curriculum: z.array(z.unknown()), lessons: z.
     const h = await hashKey(data.syncKey);
     const { error } = await supabaseAdmin
       .from("teacher_cloud_sync")
-      .upsert({ key_hash: h, workspace: data.workspace as never, updated_at: new Date().toISOString() });
+      .upsert({ key_hash: h, workspace: data.workspace, updated_at: new Date().toISOString() });
     if (error) throw new Error("تعذّر الحفظ في السحابة");
     const { data: existing } = await supabaseAdmin.storage.from(BUCKET).list(h, { limit: 1000 });
     const have = new Set((existing ?? []).map((f) => f.name));
@@ -53,5 +55,6 @@ export const pullWorkspace = createServerFn({ method: "POST" })
       const { data: s } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(`${h}/${f.name}`, 3600);
       if (s) media.push({ id: f.name, url: s.signedUrl });
     }
-    return { found: true as const, workspace: row.workspace as Record<string, unknown>, updatedAt: row.updated_at, media };
+    const workspace = workspaceSchema.parse(row.workspace);
+    return { found: true as const, workspace, updatedAt: row.updated_at, media };
   });
