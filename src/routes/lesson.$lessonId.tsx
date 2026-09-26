@@ -50,9 +50,11 @@ export const Route = createFileRoute("/lesson/$lessonId")({
 });
 
 function LessonPage() {
+  const { lessonId } = Route.useParams();
   const { lesson: fallback } = Route.useLoaderData();
   const { workspace } = useTeacherView();
-  const lesson = workspace?.lessons.find((l) => l.id === fallback?.id) ?? fallback;
+  // حصص الأستاذ المخصّصة معرّفها غير موجود في الأصل، لذا نبحث بالمعرّف من المسار
+  const lesson = workspace?.lessons.find((l) => l.id === lessonId) ?? fallback;
   if (!lesson) {
     return (
       <div dir="rtl" className="grid min-h-dvh place-items-center bg-background px-4 text-center">
