@@ -55,6 +55,6 @@ export const pullWorkspace = createServerFn({ method: "POST" })
       const { data: s } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(`${h}/${f.name}`, 3600);
       if (s) media.push({ id: f.name, url: s.signedUrl });
     }
-    const workspace = workspaceSchema.parse(row.workspace);
-    return { found: true as const, workspace, updatedAt: row.updated_at, media };
+    const validated = workspaceSchema.parse(row.workspace);
+    return { found: true as const, workspaceJson: JSON.stringify(validated), updatedAt: row.updated_at, media };
   });
