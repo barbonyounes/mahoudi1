@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BlockView } from "@/components/lesson/ContentBlocks";
 import type { Block, Term } from "@/data/lesson";
 import { Field, LinesField, TextField } from "./EditorFields";
+import { MAX_MEDIA_BYTES, MEDIA_PREFIX, saveLocalMedia } from "@/lib/local-media";
 
 const labels: Record<string, string> = { text: "نص", bullets: "نقاط", quiz: "اختيارات", openQuestion: "سؤال مفتوح", prompt: "إشكالية", task: "تعليمة", analysis: "تحليل وتفسير", writing: "حوصلة", copyMode: "أثر كتابي", integration: "إدماج", compare: "مقارنة", liveResource: "وثيقة برابط", uploadedFile: "ملف مرفوع" };
 const kinds = Object.keys(labels);
@@ -40,20 +41,15 @@ export function BlockEditor({ block, terms, onChange, onDelete, onDuplicate, onM
       toast.error("نوع الملف غير مدعوم");
       return;
     }
-    if (file.size > 3 * 1024 * 1024) {
-      toast.error("حجم الملف يتجاوز 3 ميغابايت (حد التخزين المحلي في المتصفح)");
+    if (file.size > MAX_MEDIA_BYTES) {
+      toast.error("حجم الملف يتجاوز 200 ميغابايت");
       return;
     }
     setUploading(true);
     try {
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(new Error("read failed"));
-        reader.readAsDataURL(file);
-      });
+      const id = await saveLocalMedia(file);
       const media = file.type === "application/pdf" ? "pdf" : file.type.split("/")[0] as "image" | "video" | "audio";
-      onChange({ kind: "uploadedFile", media, title: file.name, storagePath: dataUrl });
+      onChange({ kind: "uploadedFile", media, title: file.name, storagePath: MEDIA_PREFIX + id });
       toast.success("تمت إضافة الوثيقة");
     } catch {
       toast.error("تعذّرت قراءة الوثيقة");

@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTeacherWorkspace } from "@/hooks/useTeacherWorkspace";
 import { SaveStateChip } from "@/components/teacher/SaveStateChip";
+import { CloudSyncPanel } from "@/components/teacher/CloudSyncPanel";
 import { TextField } from "@/components/teacher/EditorFields";
 import {
   LEVEL_TITLES,
@@ -192,8 +193,9 @@ function TeacherLibrary() {
         </div>
         <h1 className="mt-3 text-3xl font-bold text-primary">مساحة الأستاذ</h1>
         <p className="mt-2 text-muted-foreground">
-          نظّم مقاطعك ومواردك، وانسخ الحصص الجاهزة وحرّرها. التعديلات تُحفظ تلقائياً في هذا المتصفح ولا تظهر إلا هنا.
+          نظّم مقاطعك ومواردك، وانسخ الحصص الجاهزة وحرّرها. التعديلات تُحفظ تلقائياً على هذا الجهاز وتعمل بدون إنترنت.
         </p>
+        {draft && <CloudSyncPanel draft={draft} />}
 
         <div className="mt-6 flex gap-2">
           {["3am", "4am"].map((id) => (
