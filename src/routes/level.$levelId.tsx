@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Clock, Hourglass, Play } from "lucide-react";
 import { getLevel } from "@/data/curriculum";
+import { useTeacherView } from "@/hooks/useTeacherView";
 
 export const Route = createFileRoute("/level/$levelId")({
   loader: ({ params }) => {
@@ -29,7 +30,9 @@ export const Route = createFileRoute("/level/$levelId")({
 });
 
 function LevelPage() {
-  const { level } = Route.useLoaderData();
+  const { level: fallback } = Route.useLoaderData();
+  const { workspace } = useTeacherView();
+  const level = workspace?.curriculum.find((l) => l.id === fallback.id) ?? fallback;
 
   return (
     <div dir="rtl" className="min-h-dvh bg-background px-4 py-10 sm:px-8 sm:py-14">
