@@ -43,6 +43,7 @@ export function useTeacherWorkspace() {
       setSaveState("saving");
       try {
         localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(next));
+        window.dispatchEvent(new Event("teacher-workspace-saved"));
         setSaveState("saved");
       } catch {
         setSaveState("error");
