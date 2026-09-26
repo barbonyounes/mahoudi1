@@ -1,4 +1,5 @@
-import type { CurriculumSegment, CurriculumResource, CurriculumSession, LessonDef, Station } from "@/data/lesson";
+import type { CurriculumResource, CurriculumSegment, CurriculumSession } from "@/data/curriculum";
+import type { LessonDef, Station } from "@/data/lesson";
 
 export function uid(prefix: string): string {
   return `${prefix}-${crypto.randomUUID().slice(0, 8)}`;
@@ -9,7 +10,9 @@ export function moveItem<T>(list: T[], index: number, direction: -1 | 1): T[] {
   const target = index + direction;
   if (target < 0 || target >= list.length) return list;
   const next = [...list];
-  [next[index], next[target]] = [next[target], next[index]];
+  const tmp = next[index] as T;
+  next[index] = next[target] as T;
+  next[target] = tmp;
   return next;
 }
 

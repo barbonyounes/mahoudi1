@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Json } from "@/integrations/supabase/types";
 import type { CurriculumLevel } from "@/data/curriculum";
 import type { LessonDef } from "@/data/lesson";
 
@@ -40,8 +41,8 @@ export const saveTeacherWorkspace = createServerFn({ method: "POST" })
     if (serialized.length > 8_000_000) throw new Error("حجم مساحة العمل كبير جداً");
     const { error } = await context.supabase.from("teacher_workspaces").upsert({
       user_id: context.userId,
-      curriculum: data.curriculum,
-      lessons: data.lessons,
+      curriculum: data.curriculum as unknown as Json,
+      lessons: data.lessons as unknown as Json,
       updated_at: new Date().toISOString(),
     });
     if (error) throw new Error("تعذّر حفظ التعديلات");

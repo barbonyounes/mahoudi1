@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({ next: typeof search.next === "string" ? search.next : "/teacher" }),
+  validateSearch: (search: Record<string, unknown>) => ({ next: typeof search["next"] === "string" ? search["next"] : "/teacher" }),
   head: () => ({ meta: [
     { title: "دخول الأستاذ — منصة الحصص" },
     { name: "description", content: "الدخول الآمن إلى مساحة تخصيص حصص علوم الطبيعة والحياة." },
