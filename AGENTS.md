@@ -11,6 +11,7 @@
 
 ## Architecture rules
 
-- Teacher workspace: `/teacher` (library) and `/teacher/lesson/$lessonId` (editor) live under `_authenticated`; state is one whole-workspace draft (`curriculum` for 3am+4am + `lessons` array) edited locally and autosaved (1.2s debounce) via `useTeacherWorkspace`. Why: the DB stores the full snapshot per teacher as JSON, so all CRUD operates on one draft object.
-- Student pages (`/level/$levelId`, `/lesson/$lessonId`) read the teacher's saved workspace through `useTeacherView` only when signed in; otherwise the original static data renders. Why: teacher customizations are per-account and must never alter public content.
+- Teacher workspace: `/teacher` (library) and `/teacher/lesson/$lessonId` (editor, file `teacher_.lesson.$lessonId.tsx` — trailing underscore keeps it out of the library's route nesting) are public, no login. State is one whole-workspace draft (`curriculum` for 3am+4am + `lessons` array) autosaved (0.8s debounce) to localStorage key `svt-teacher-workspace-v1` via `useTeacherWorkspace`. Why: user explicitly rejected email/password gating; edits are per-browser.
+- Student pages (`/level/$levelId`, `/lesson/$lessonId`) read the locally saved workspace through `useTeacherView` (localStorage + `teacher-workspace-saved` event); with no saved workspace the original static data renders. Why: teacher customizations are per-browser and must never alter the shipped content.
+- Uploaded teacher files are stored as data URLs in the draft (3MB cap) — no Supabase storage, since there is no auth.
 - Copyable "original" lessons stay in `src/data/lessons.ts`; teacher copies get fresh ids prefixed `lesson-` and their curriculum session records `originalLessonId` to enable restore.
