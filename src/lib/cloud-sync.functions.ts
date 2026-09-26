@@ -28,7 +28,7 @@ export const pushWorkspace = createServerFn({ method: "POST" })
     const h = await hashKey(data.syncKey);
     const { error } = await supabaseAdmin
       .from("teacher_cloud_sync")
-      .upsert({ key_hash: h, workspace: data.workspace, updated_at: new Date().toISOString() });
+      .upsert({ key_hash: h, workspace: data.workspace as never, updated_at: new Date().toISOString() });
     if (error) throw new Error("تعذّر الحفظ في السحابة");
     const { data: existing } = await supabaseAdmin.storage.from(BUCKET).list(h, { limit: 1000 });
     const have = new Set((existing ?? []).map((f) => f.name));
