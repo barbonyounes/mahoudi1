@@ -14,6 +14,7 @@ import { ControlBar } from "@/components/lesson/ControlBar";
 import { BlockView } from "@/components/lesson/ContentBlocks";
 import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
+import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import {
   BlackoutOverlay,
   BreakOverlay,
@@ -34,12 +35,16 @@ export const Route = createFileRoute("/lesson/$lessonId")({
         meta: [{ title: "الحصة غير متوفرة" }, { name: "robots", content: "noindex" }],
       };
     }
-    const description = `حصة رقمية تفاعلية — ${lesson.title} (${lesson.level})، ${lesson.stations.length} محطات بيداغوجية مع مؤقت زمني وأدوات القسم.`;
+    const isDigestionJourney = lesson.id === "dig-mouth";
+    const title = isDigestionJourney ? "تحولات الأغذية خلال الهضم — رحلة تفاعلية" : `${lesson.title} — حصة تفاعلية`;
+    const description = isDigestionJourney
+      ? "درس مخصص للسنة الرابعة متوسط يتتبع تحول الغذاء في الفم والمعدة والمعي الدقيق، مع تجارب الإنزيمات والدعامة التشريحية والتقويم."
+      : `حصة رقمية تفاعلية — ${lesson.title} (${lesson.level})، ${lesson.stations.length} محطات بيداغوجية مع مؤقت زمني وأدوات القسم.`;
     return {
       meta: [
-        { title: `${lesson.title} — حصة تفاعلية` },
+        { title },
         { name: "description", content: description },
-        { property: "og:title", content: `${lesson.title} — حصة تفاعلية` },
+        { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
@@ -68,6 +73,12 @@ function LessonPage() {
         </div>
       </div>
     );
+  }
+  const teacherChangedLesson = Boolean(
+    workspace && fallback && JSON.stringify(lesson) !== JSON.stringify(fallback),
+  );
+  if (lesson.id === "dig-mouth" && !teacherChangedLesson) {
+    return <DigestionJourney lesson={lesson} />;
   }
   return <LessonStage lesson={lesson} />;
 }
