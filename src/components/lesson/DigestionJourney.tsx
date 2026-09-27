@@ -4,15 +4,12 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
-  CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   FlaskConical,
   Focus,
   Home,
   ImageIcon,
   Maximize2,
-  Microscope,
   RotateCcw,
   Sparkles,
   X,
@@ -238,7 +235,7 @@ export function DigestionJourney({ lesson }: { lesson: LessonDef }) {
         <div className="h-1 bg-secondary"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} /></div>
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-3 py-3 sm:px-6">
           <Button type="button" variant="ghost" size="icon" onClick={() => void navigate({ to: "/level/$levelId", params: { levelId: "4am" } })} aria-label="العودة إلى السنة الرابعة"><Home /></Button>
-          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">السنة الرابعة متوسط · رحلة الهضم</p><h1 className="truncate text-sm font-black sm:text-lg">{lesson.title}</h1></div>
+          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">السنة الرابعة متوسط · رحلة الهضم</p><h1 className="truncate text-sm font-black sm:text-lg">تحولات الأغذية خلال الهضم</h1></div>
           <Button type="button" variant="outline" size="sm" onClick={() => setShowSources(true)}><ImageIcon /> <span className="hidden sm:inline">الوثائق الأصلية</span></Button>
           <Button type="button" variant="ghost" size="icon" onClick={() => document.fullscreenElement ? void document.exitFullscreen() : void document.documentElement.requestFullscreen()} aria-label="ملء الشاشة"><Maximize2 /></Button>
         </div>
