@@ -14,6 +14,7 @@ import { ControlBar } from "@/components/lesson/ControlBar";
 import { BlockView } from "@/components/lesson/ContentBlocks";
 import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
+import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import {
   BlackoutOverlay,
   BreakOverlay,
@@ -68,6 +69,12 @@ function LessonPage() {
         </div>
       </div>
     );
+  }
+  const teacherChangedLesson = Boolean(
+    workspace && fallback && JSON.stringify(lesson) !== JSON.stringify(fallback),
+  );
+  if (lesson.id === "dig-mouth" && !teacherChangedLesson) {
+    return <DigestionJourney lesson={lesson} />;
   }
   return <LessonStage lesson={lesson} />;
 }
