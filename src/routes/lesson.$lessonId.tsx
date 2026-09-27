@@ -15,6 +15,7 @@ import { BlockView } from "@/components/lesson/ContentBlocks";
 import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
 import { DigestionJourney } from "@/components/lesson/DigestionJourney";
+import { EarthquakeJourney } from "@/components/lesson/EarthquakeJourney";
 import {
   BlackoutOverlay,
   BreakOverlay,
@@ -79,6 +80,9 @@ function LessonPage() {
   );
   if (lesson.id === "dig-mouth" && !teacherChangedLesson) {
     return <DigestionJourney lesson={lesson} />;
+  }
+  if (lesson.id === "eq-phenomenon" && !teacherChangedLesson) {
+    return <EarthquakeJourney lesson={lesson} />;
   }
   return <LessonStage lesson={lesson} />;
 }
