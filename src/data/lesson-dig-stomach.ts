@@ -1,4 +1,5 @@
 import type { LessonDef, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonDigStomach: LessonDef = {
   id: "dig-stomach",
@@ -19,6 +20,7 @@ export const lessonDigStomach: LessonDef = {
       teacherNote: "اعرضي الوضعية بملء الشاشة، ملاحظة صامتة أولاً، ثم اجمعي تساؤلات التلاميذ دون تصحيح.",
       keyPoints: ["ملاحظة صامتة", "صياغة الإشكالية", "لا إجابات في هذه المرحلة"],
       blocks: [
+        liveResources.digestionVideo,
         { kind: "text", text: "نتائج تحليل محتوى الأنبوب الهضمي عند ثلاث مستويات: عند مخرج المعدة نجد ببتيدات وسكريات، وفي بداية المعي الدقيق نجد أحماضاً أمينية وسكراً بسيطاً، وفي آخره لا نجد إلا مغذيات بسيطة." },
         { kind: "prompt", question: "كيف تتم بقية تحولات الغذاء بعد الفم؟ وما نواتج الهضم النهائية؟" },
         { kind: "bullets", items: ["ملاحظة صامتة للمعطيات.", "الإشكالية: ما دور المعدة والمعي الدقيق في الهضم؟"] },

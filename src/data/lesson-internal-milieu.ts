@@ -1,4 +1,5 @@
 import type { LessonDef, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonInternalMilieu: LessonDef = {
   id: "internal-milieu",
@@ -19,6 +20,7 @@ export const lessonInternalMilieu: LessonDef = {
       teacherNote: "اعرضي الوضعية بملء الشاشة، ملاحظة صامتة أولاً، ثم اجمعي تساؤلات التلاميذ دون تصحيح.",
       keyPoints: ["ملاحظة صامتة", "صياغة الإشكالية", "لا إجابات في هذه المرحلة"],
       blocks: [
+        liveResources.bloodVideo,
         { kind: "text", text: "مقطع مجهري لعضو: شعيرة دموية محاطة بخلايا يفصلها عنها سائل شفاف؛ وقياسات تُظهر أن هذا السائل غني بالمغذيات قرب الشعيرة وفقير منها قرب الخلايا النشيطة." },
         { kind: "prompt", question: "كيف تصل المغذيات فعلياً إلى داخل الخلية؟ وما مكوّنات الوسط الذي يحيط بها؟" },
         { kind: "bullets", items: ["ملاحظة صامتة للمقطع.", "الإشكالية: ما الوسط الداخلي وما دوره في تغذية الخلايا؟"] },

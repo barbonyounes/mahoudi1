@@ -1,4 +1,5 @@
 import type { LessonDef, Station, Term } from "@/data/lesson";
+import { liveResources } from "@/data/live-resources";
 
 export const lessonEqCauses: LessonDef = {
   id: "eq-causes",
@@ -29,6 +30,7 @@ export const lessonEqCauses: LessonDef = {
       teacherNote: "اعرضي المعطيات بملء الشاشة في صمت دون تسمية أي مصطلح، ودوّني تساؤلات التلاميذ.",
       keyPoints: ["ملاحظة التوزيع غير العشوائي للزلازل", "طرح التساؤل", "تدوين الإشكالية"],
       blocks: [
+        liveResources.earthquakeSimulator,
         {
           kind: "bullets",
           items: [
