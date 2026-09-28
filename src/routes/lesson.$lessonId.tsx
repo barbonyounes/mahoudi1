@@ -82,8 +82,13 @@ function LessonPage() {
   if (lesson.id === "dig-mouth" && !teacherChangedLesson) {
     return <DigestionJourney lesson={lesson} />;
   }
-  if (lesson.id === "eq-phenomenon" && !teacherChangedLesson) {
-    return <EarthquakeJourney lesson={lesson} />;
+  if (lesson.id === "eq-phenomenon") {
+    return (
+      <>
+        <EarthquakeJourney lesson={lesson} />
+        {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
+      </>
+    );
   }
   return (
     <>

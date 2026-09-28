@@ -19,16 +19,7 @@ import boumerdesDamage from "@/assets/eq-effects/boumerdes-damage.jpeg.asset.jso
 
 const documents = [p3.url, p4.url, p5.url, p6.url, p7.url];
 
-const effectImages = [
-  { src: boumerdesDamage.url, title: "آثار زلزال بومرداس", description: "وثيقة مركبة تُظهر حجم الدمار وعمليات الإنقاذ داخل المناطق العمرانية.", category: "وثيقة تمهيدية" },
-  { src: buildingDamage.url, title: "أضرار عمرانية", description: "انهيار وتشقق المباني والمنشآت نتيجة قوة الهزات الأرضية.", category: "خسائر مادية" },
-  { src: humanImpact.url, title: "أضرار بشرية", description: "ضحايا وجرحى وعمليات إجلاء وإنقاذ السكان من تحت الأنقاض.", category: "خسائر بشرية" },
-  { src: roadDamage.url, title: "تخرب الطرقات", description: "تشققات وانزياحات أرضية تقطع شبكة الطرق خارج المناطق العمرانية.", category: "تشوه سطح الأرض" },
-  { src: railwayDamage.url, title: "تشوه السكك الحديدية", description: "انحناء القضبان بسبب إزاحة طبقات الأرض أثناء الزلزال.", category: "تشوه سطح الأرض" },
-  { src: coastalRetreat.url, title: "تراجع مياه البحر", description: "تغير مفاجئ في مستوى الساحل وتشققات أرضية مرتبطة بالنشاط الزلزالي.", category: "آثار ساحلية" },
-  { src: tsunami.url, title: "موجة تسونامي", description: "أمواج بحرية قوية قد تنشأ عندما يحدث زلزال شديد تحت قاع البحر.", category: "آثار ساحلية" },
-  { src: riskMap.url, title: "خريطة الخطر الزلزالي في الجزائر", description: "توضح تركز الخطر الأكبر في الشريط الشمالي وتدرجه نحو الجنوب.", category: "توزع الخطر" },
-];
+type ActivityDocument = { src: string; title: string; caption: string };
 
 const stages = [
   { id: "start", short: "الانطلاق", kicker: "الوضعية الانطلاقية للمقطع", title: "هل سطح الأرض ثابت حقاً؟", subtitle: "براكين، زلازل، فيضانات وطرق متشققة: شواهد على نشاط داخلي مستمر." },
@@ -80,68 +71,64 @@ function QA({ items }: { items: { q: string; a: React.ReactNode }[] }) {
   );
 }
 
-function EffectsGallery() {
-  const [selected, setSelected] = useState<(typeof effectImages)[number] | null>(null);
+function DocumentActivity({ number, title, instruction, documents: activityDocuments, conclusion }: { number: string; title: string; instruction: string; documents: ActivityDocument[]; conclusion: React.ReactNode }) {
+  const [selected, setSelected] = useState<ActivityDocument | null>(null);
+  const [revealed, setRevealed] = useState(false);
   return (
-    <>
-      <section className="mt-10" aria-labelledby="effects-gallery-title">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
-          <div>
-            <p className="text-sm font-black text-primary">وثائق النشاط 1</p>
-            <h3 id="effects-gallery-title" className="mt-1 text-2xl font-black">اقرأ آثار الزلزال من الصور</h3>
-          </div>
-          <p className="text-sm font-bold text-muted-foreground">اضغط على أي وثيقة لتكبيرها</p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {effectImages.map((image, index) => (
+    <section className="border border-border bg-card p-5 sm:p-7">
+      <div className="border-r-4 border-primary pr-4">
+        <p className="text-sm font-black text-primary">النشاط {number}</p>
+        <h3 className="mt-1 text-2xl font-black">{title}</h3>
+        <p className="mt-3 text-lg font-bold leading-8">{instruction}</p>
+      </div>
+      <div className={`mt-6 grid gap-4 ${activityDocuments.length > 1 ? "sm:grid-cols-2" : ""}`}>
+        {activityDocuments.map((document) => (
             <Button
-              key={image.title}
+              key={document.title}
               type="button"
               variant="outline"
-              onClick={() => setSelected(image)}
-              className={`group relative h-auto min-h-80 w-full flex-col items-stretch justify-start overflow-hidden whitespace-normal p-0 text-right ${index === 0 || index === 7 ? "sm:col-span-2" : ""}`}
+              onClick={() => setSelected(document)}
+              className="group relative h-auto w-full flex-col items-stretch justify-start overflow-hidden whitespace-normal p-0 text-right"
             >
-              <span className="relative block aspect-[4/3] w-full overflow-hidden bg-secondary">
-                <img src={image.src} alt={image.title} className="size-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
+              <span className="relative block aspect-[16/10] w-full overflow-hidden bg-secondary">
+                <img src={document.src} alt={document.title} className="size-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
                 <span className="absolute left-3 top-3 grid size-9 place-items-center bg-background/90 text-primary shadow-sm backdrop-blur"><Maximize2 className="size-4" /></span>
               </span>
               <span className="block w-full p-4">
-                <span className="text-xs font-black text-primary">{image.category}</span>
-                <span className="mt-1 block text-lg font-black text-foreground">{image.title}</span>
-                <span className="mt-2 block text-sm font-medium leading-7 text-muted-foreground">{image.description}</span>
+                <span className="block text-lg font-black text-foreground">{document.title}</span>
+                <span className="mt-2 block text-sm font-medium leading-7 text-muted-foreground">{document.caption}</span>
               </span>
             </Button>
-          ))}
-        </div>
-      </section>
+        ))}
+      </div>
+      <div className="mt-6 border-t border-border pt-5">
+        {revealed ? <div className="animate-fade-in border-r-4 border-success bg-success/10 p-5 text-lg leading-9">{conclusion}</div> : <Button type="button" onClick={() => setRevealed(true)}><Sparkles /> كشف نتيجة النشاط</Button>}
+      </div>
       {selected && (
         <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 p-3 backdrop-blur sm:p-8" role="dialog" aria-modal="true" aria-label={selected.title}>
           <div className="mx-auto mb-3 flex w-full max-w-6xl items-center justify-between gap-3">
-            <div><p className="text-xs font-black text-primary">{selected.category}</p><h3 className="text-lg font-black sm:text-2xl">{selected.title}</h3></div>
+            <h3 className="text-lg font-black sm:text-2xl">{selected.title}</h3>
             <Button type="button" variant="secondary" onClick={() => setSelected(null)}><X /> إغلاق</Button>
           </div>
           <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 place-items-center overflow-hidden bg-card">
             <img src={selected.src} alt={selected.title} className="max-h-full max-w-full object-contain" />
           </div>
-          <p className="mx-auto mt-3 w-full max-w-6xl text-center text-sm font-bold leading-7 text-muted-foreground sm:text-base">{selected.description}</p>
+          <p className="mx-auto mt-3 w-full max-w-6xl text-center text-sm font-bold leading-7 text-muted-foreground sm:text-base">{selected.caption}</p>
         </div>
       )}
-    </>
+    </section>
   );
 }
 
 function StartStage() {
-  const cards = [
-    { t: "بركان نشط", d: "مظهر من مظاهر النشاط الداخلي." },
-    { t: "آثار زلزال", d: "هزات مفاجئة تهدم المباني." },
-    { t: "فيضان", d: "مظهر من مظاهر النشاط الخارجي." },
-    { t: "طريق متشقق", d: "تشوهات تصيب سطح الأرض." },
-  ];
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
       <div>
         <p className="text-2xl font-bold leading-[1.9]">يُعتقد دائماً أن سطح الأرض صلب ومستقر تماماً، لكنه في تغير مستمر؛ فلا يزال الكثير من أشكاله آخذاً في التشكل بفعل نشاط زلزالي وبركاني قويين قد تكون لهما عواقب وخيمة.</p>
-        <div className="mt-6 grid grid-cols-2 gap-3">{cards.map((c) => <article key={c.t} className="border-t-4 border-primary bg-card p-4 shadow-sm"><h3 className="font-black">{c.t}</h3><p className="mt-1 text-sm leading-7 text-foreground/75">{c.d}</p></article>)}</div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <button type="button" className="overflow-hidden border border-border bg-card text-right" onClick={() => undefined}><img src={boumerdesDamage.url} alt="آثار زلزال بومرداس" className="aspect-[16/10] w-full object-cover" /><span className="block p-4 font-black">سند 1 — آثار زلزال</span></button>
+          <button type="button" className="overflow-hidden border border-border bg-card text-right" onClick={() => undefined}><img src={roadDamage.url} alt="طريق متشقق بفعل الزلزال" className="aspect-[16/10] w-full object-cover" /><span className="block p-4 font-black">سند 2 — تشوه سطح الأرض</span></button>
+        </div>
         <div className="mt-6 space-y-3 border-r-4 border-accent bg-accent/10 p-5 text-lg font-bold leading-8">
           <p>1- كيف يمكن لهذه الظواهر الجيولوجية أن تكون شاهدة على النشاط الداخلي للكرة الأرضية؟</p>
           <p>2- ما الإجراءات التي يجب اتخاذها للوقاية من مخاطر هذه الظواهر؟</p>
@@ -167,30 +154,34 @@ function ProblemStage() {
 
 function EffectsStage() {
   return (
-    <div>
-      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
-        <QA items={[
-          { q: "استخرج المظاهر التي خلفها زلزال بومرداس.", a: <p>انهيار المباني والمنشآت (خسائر مادية)، موت وإصابة الأشخاص (خسائر بشرية).</p> },
-          { q: "فسّر تباين آثار الزلزال كلما ابتعدنا عن موقعه، وأثره في نفس الموقع.", a: <p>تقل الخسائر كلما ابتعدنا عن موقع الزلزال (تباين الشدة من منطقة لأخرى)، أما في نفس الموقع فالأثر مرتبط بمقاومة البناية للهزات.</p> },
-          { q: "ما هدف تدخل فرق الإنقاذ؟", a: <p>إنقاذ من هم تحت الركام، إسعاف الجرحى، منع اندلاع الحرائق وحماية المنطقة.</p> },
-          { q: "استخرج آثار الزلزال خارج المناطق العمرانية من الوثائق المصوّرة.", a: <p>انهيار الطرق وتشوه السكك الحديدية، تشققات على سطح الأرض، وتغير مفاجئ في مياه البحر قد ترافقه أمواج تسونامي.</p> },
-          { q: "من مقتطف الجريدة (الوثيقة 3): استخرج خصائص الزلزال وعلّق على سلوك السكان.", a: <p>المركز في البحر على بعد <strong>19 km</strong> من بولوغين، شدته <strong>5.6</strong> على سلم ريشتر، تلته هزة ارتدادية 4.6 ونحو 30 هزة ارتدادية. وقع ضحايا بسبب سلوكات غير سوية (انعدام الثقافة الزلزالية).</p> },
-          { q: "بناءً على ما توصلت إليه، قدّم تعريفاً للزلزال.", a: <p><strong>الزلزال</strong> ظاهرة طبيعية تحدث فجأة، تتجلى في هزات أرضية سريعة متكررة متباينة الشدة، تسبب تشوهات للقشرة الأرضية وخسائر مادية وبشرية تزداد فداحتها بنقص الوعي والثقافة الزلزالية.</p> },
-        ]} />
-        <div className="space-y-4"><SourceDocument index={1} caption="النشاط 1 — التعليمات والإجابات" /><SourceDocument index={2} caption="الاستنتاج ونشاط 2" /></div>
-      </div>
-      <EffectsGallery />
+    <div className="space-y-8">
+      <DocumentActivity number="1-أ" title="الخسائر داخل المناطق العمرانية" instruction="لاحظ الوثائق، صنّف الآثار إلى خسائر مادية وخسائر بشرية، ثم فسّر لماذا تختلف الخسائر في المكان نفسه من بناية إلى أخرى." documents={[
+        { src: buildingDamage.url, title: "الوثيقة 1 — أضرار عمرانية", caption: "قارن درجة انهيار المباني وانتبه إلى اختلاف مقاومتها للهزات." },
+        { src: humanImpact.url, title: "الوثيقة 2 — أضرار بشرية وتدخل الإنقاذ", caption: "حدد الخسائر البشرية واستخرج أهداف تدخل فرق الحماية المدنية." },
+      ]} conclusion={<p>خلّف الزلزال خسائر مادية وبشرية؛ وترتبط فداحة الأضرار بقوة الهزة، والقرب من موقعها، ومدى مقاومة البنايات، وسرعة الإنقاذ.</p>} />
+      <DocumentActivity number="1-ب" title="آثار الزلزال خارج العمران" instruction="قارن الوثيقتين وحدد التشوهات التي أصابت سطح الأرض وشبكات النقل. ماذا تدل هذه التشوهات عن طبيعة الهزة؟" documents={[
+        { src: roadDamage.url, title: "الوثيقة 3 — تخرب الطرقات", caption: "تشققات وانزياحات تقطع الطريق وتكشف إزاحة سطح الأرض." },
+        { src: railwayDamage.url, title: "الوثيقة 4 — تشوه السكك الحديدية", caption: "لاحظ انحناء القضبان وحدد القوة التي سببت هذا التشوه." },
+      ]} conclusion={<p>لا تقتصر آثار الزلزال على المباني؛ بل تُحدث الهزات تشققات وإزاحات وتشوهات في القشرة الأرضية والمنشآت الممتدة فوقها.</p>} />
+      <DocumentActivity number="1-ج" title="الآثار الساحلية" instruction="رتب ما تعرضه الوثيقتان زمنياً: ماذا يحدث لمياه البحر أولاً، وما الخطر الذي قد يأتي بعد ذلك؟ اقترح سلوكاً وقائياً مناسباً." documents={[
+        { src: coastalRetreat.url, title: "الوثيقة 5 — تراجع مفاجئ لمياه البحر", caption: "انحسار غير عادي للمياه بعد هزة ساحلية علامة إنذار تستوجب الابتعاد عن الشاطئ." },
+        { src: tsunami.url, title: "الوثيقة 6 — موجة تسونامي", caption: "موجات بحرية قوية قد تنتج عن زلزال شديد تحت قاع البحر." },
+      ]} conclusion={<p>قد يسبب الزلزال البحري تراجعاً مفاجئاً للمياه ثم أمواجاً خطرة؛ لذلك يجب إخلاء الساحل سريعاً والتوجه إلى مكان مرتفع.</p>} />
+      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]"><QA items={[
+        { q: "اعتماداً على نتائج النشاطات السابقة، عرّف الزلزال.", a: <p><strong>الزلزال</strong> ظاهرة طبيعية فجائية تتجلى في هزات سريعة ومتكررة ومتباينة الشدة، وتسبب تشوهات للقشرة الأرضية وخسائر مادية وبشرية.</p> },
+        { q: "استخرج من مذكرة الأستاذ خصائص زلزال الجريدة وسلوك السكان.", a: <p>حدد مركزه في البحر على بعد <strong>19 km</strong> من بولوغين، وبلغ مقداره <strong>5.6</strong> على سلم ريشتر، تلته هزة 4.6 ونحو 30 هزة ارتدادية. زادت السلوكات غير السوية من عدد الضحايا.</p> },
+      ]} /><div className="space-y-4"><SourceDocument index={1} caption="النشاط 1 — التعليمات والإجابات" /><SourceDocument index={2} caption="الاستنتاج ونشاط 2" /></div></div>
     </div>
   );
 }
 
 const cities = [
-  { name: "زموري", km: 0, intensity: "X", x: 50, y: 50 },
-  { name: "بومرداس", km: 15, intensity: "IX", x: 38, y: 55 },
-  { name: "الجزائر", km: 50, intensity: "VIII", x: 22, y: 60 },
-  { name: "تيزي وزو", km: 60, intensity: "VII", x: 72, y: 66 },
-  { name: "البويرة", km: 90, intensity: "VI", x: 62, y: 86 },
-  { name: "بجاية", km: 170, intensity: "V", x: 92, y: 60 },
+  { name: "المركز السطحي في البحر شمال زموري", x: 50, y: 42 },
+  { name: "زموري", x: 50, y: 58 },
+  { name: "بومرداس", x: 37, y: 63 },
+  { name: "الجزائر", x: 20, y: 67 },
+  { name: "تيزي وزو", x: 72, y: 70 },
+  { name: "بجاية", x: 91, y: 62 },
 ];
 
 function EpicenterStage() {
@@ -211,9 +202,9 @@ function EpicenterStage() {
         ))}
       </div>
       <div className="space-y-5">
-        <p className="text-lg font-bold leading-8">اضغط على المدن لقراءة شدة الهزة (سلم MSK) وبُعدها عن زموري.</p>
+         <p className="text-lg font-bold leading-8">اضغط على المواقع، ثم استعمل شكل الخطوط المتساوية الشدة لتعيين المركز السطحي والاستنتاج النوعي دون قيم غير واردة في المذكرة.</p>
         {c ? (
-          <div className="border border-border bg-card p-6"><p className="text-sm font-black text-primary">{c.name}</p><p className="mt-2 text-4xl font-black">الشدة {c.intensity}</p><p className="mt-2 text-muted-foreground">البعد عن زموري ≈ {c.km} km</p></div>
+          <div className="border border-border bg-card p-6"><p className="text-sm font-black text-primary">الموقع المحدد</p><p className="mt-2 text-2xl font-black">{c.name}</p><p className="mt-2 text-muted-foreground">قارن موقعه بمركز الخطوط، ثم صف الشدة: أكبر قرب المركز وتتناقص بالابتعاد عنه.</p></div>
         ) : <div className="border border-dashed border-border p-6 text-muted-foreground">لم تُختر مدينة بعد.</div>}
         <QA items={[
           { q: "ماذا توضح خريطة الخطوط متساوية الشدة؟", a: <p>المناطق التي تكون فيها الهزات بنفس الشدة.</p> },
@@ -274,7 +265,9 @@ function AfricaStage() {
   ];
   const [mountains, setMountains] = useState(false);
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="space-y-8">
+      <DocumentActivity number="3-أ" title="أين يتركز الخطر الزلزالي في الجزائر؟" instruction="اقرأ مفتاح الخريطة، قارن الشمال والجنوب، ثم استخرج المناطق الأكثر تعرضاً للخطر الزلزالي." documents={[{ src: riskMap.url, title: "الوثيقة 1 — خريطة الخطر الزلزالي في الجزائر", caption: "استعمل ألوان المفتاح لتحديد اتجاه تزايد الخطر دون اختراع قيم عددية." }]} conclusion={<p>يتركز الخطر الزلزالي الأكبر في الشريط الشمالي للجزائر، ويتناقص عموماً كلما اتجهنا نحو الجنوب.</p>} />
+      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
       <div>
         <div className="relative aspect-[16/9] overflow-hidden border border-border bg-secondary/50">
           <div className="absolute inset-x-0 top-0 h-[22%] bg-primary/15"><span className="absolute right-3 top-2 text-xs font-bold text-primary">البحر الأبيض المتوسط</span></div>
@@ -284,7 +277,7 @@ function AfricaStage() {
           <span className="absolute bottom-3 left-3 bg-background/90 px-2 py-1 text-xs font-black text-destructive">خط GLA: قابس — الأغواط — أغادير</span>
         </div>
         <Button type="button" variant={mountains ? "default" : "outline"} className="mt-4 h-12" onClick={() => setMountains((v) => !v)}>{mountains ? "إخفاء" : "تركيب"} خريطة الجبال</Button>
-      </div>
+      </div></div>
       <div className="space-y-5">
         <QA items={[
           { q: "عبّر عن النشاط الزلزالي وشدته في شمال إفريقيا.", a: <p>تعرضت المنطقة كلها لزلازل متفاوتة الشدة، يمتد نشاطها على خط من قابس (تونس) إلى أغادير (المغرب) مروراً بالأغواط.</p> },
@@ -323,7 +316,7 @@ function SynthesisStage() {
 
 const stageViews = [StartStage, ProblemStage, EffectsStage, EpicenterStage, FocusStage, AfricaStage, SynthesisStage];
 
-export function EarthquakeJourney(_: { lesson: LessonDef }) {
+export function EarthquakeJourney({ lesson }: { lesson: LessonDef }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [showSources, setShowSources] = useState(false);
@@ -339,7 +332,7 @@ export function EarthquakeJourney(_: { lesson: LessonDef }) {
         <div className="h-1 bg-secondary"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} /></div>
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-3 py-3 sm:px-6">
           <Button type="button" variant="ghost" size="icon" onClick={() => void navigate({ to: "/level/$levelId", params: { levelId: "3am" } })} aria-label="العودة إلى السنة الثالثة"><Home /></Button>
-          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">السنة الثالثة متوسط · الديناميكية الداخلية</p><h1 className="truncate text-sm font-black sm:text-lg">الزلازل ظاهرة طبيعية</h1></div>
+          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">{lesson.level} · {lesson.unit}</p><h1 className="truncate text-sm font-black sm:text-lg">{lesson.title}</h1></div>
           <Button type="button" variant="outline" size="sm" onClick={() => setShowSources(true)}><ImageIcon /> <span className="hidden sm:inline">مذكرة الأستاذ</span></Button>
           <Button type="button" variant="ghost" size="icon" onClick={() => document.fullscreenElement ? void document.exitFullscreen() : void document.documentElement.requestFullscreen()} aria-label="ملء الشاشة"><Maximize2 /></Button>
         </div>
