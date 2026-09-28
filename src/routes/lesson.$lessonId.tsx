@@ -16,6 +16,7 @@ import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
 import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import { EarthquakeJourney } from "@/components/lesson/EarthquakeJourney";
+import { RestoreOriginalButton } from "@/components/lesson/RestoreOriginalButton";
 import {
   BlackoutOverlay,
   BreakOverlay,
