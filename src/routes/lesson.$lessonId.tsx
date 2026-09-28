@@ -16,6 +16,7 @@ import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
 import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import { EarthquakeJourney } from "@/components/lesson/EarthquakeJourney";
+import { RestoreOriginalButton } from "@/components/lesson/RestoreOriginalButton";
 import {
   BlackoutOverlay,
   BreakOverlay,
@@ -84,7 +85,12 @@ function LessonPage() {
   if (lesson.id === "eq-phenomenon" && !teacherChangedLesson) {
     return <EarthquakeJourney lesson={lesson} />;
   }
-  return <LessonStage lesson={lesson} />;
+  return (
+    <>
+      <LessonStage lesson={lesson} />
+      {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
+    </>
+  );
 }
 
 function LessonStage({ lesson }: { lesson: LessonDef }) {
