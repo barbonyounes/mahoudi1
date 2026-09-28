@@ -8,8 +8,27 @@ import p4 from "@/assets/eq-docs/p-04.jpg.asset.json";
 import p5 from "@/assets/eq-docs/p-05.jpg.asset.json";
 import p6 from "@/assets/eq-docs/p-06.jpg.asset.json";
 import p7 from "@/assets/eq-docs/p-07.jpg.asset.json";
+import riskMap from "@/assets/eq-effects/risk-map.jpeg.asset.json";
+import tsunami from "@/assets/eq-effects/tsunami.jpeg.asset.json";
+import coastalRetreat from "@/assets/eq-effects/coastal-retreat.jpeg.asset.json";
+import buildingDamage from "@/assets/eq-effects/building-damage.jpeg.asset.json";
+import humanImpact from "@/assets/eq-effects/human-impact.jpeg.asset.json";
+import railwayDamage from "@/assets/eq-effects/railway-damage.jpeg.asset.json";
+import roadDamage from "@/assets/eq-effects/road-damage.jpeg.asset.json";
+import boumerdesDamage from "@/assets/eq-effects/boumerdes-damage.jpeg.asset.json";
 
 const documents = [p3.url, p4.url, p5.url, p6.url, p7.url];
+
+const effectImages = [
+  { src: boumerdesDamage.url, title: "آثار زلزال بومرداس", description: "وثيقة مركبة تُظهر حجم الدمار وعمليات الإنقاذ داخل المناطق العمرانية.", category: "وثيقة تمهيدية" },
+  { src: buildingDamage.url, title: "أضرار عمرانية", description: "انهيار وتشقق المباني والمنشآت نتيجة قوة الهزات الأرضية.", category: "خسائر مادية" },
+  { src: humanImpact.url, title: "أضرار بشرية", description: "ضحايا وجرحى وعمليات إجلاء وإنقاذ السكان من تحت الأنقاض.", category: "خسائر بشرية" },
+  { src: roadDamage.url, title: "تخرب الطرقات", description: "تشققات وانزياحات أرضية تقطع شبكة الطرق خارج المناطق العمرانية.", category: "تشوه سطح الأرض" },
+  { src: railwayDamage.url, title: "تشوه السكك الحديدية", description: "انحناء القضبان بسبب إزاحة طبقات الأرض أثناء الزلزال.", category: "تشوه سطح الأرض" },
+  { src: coastalRetreat.url, title: "تراجع مياه البحر", description: "تغير مفاجئ في مستوى الساحل وتشققات أرضية مرتبطة بالنشاط الزلزالي.", category: "آثار ساحلية" },
+  { src: tsunami.url, title: "موجة تسونامي", description: "أمواج بحرية قوية قد تنشأ عندما يحدث زلزال شديد تحت قاع البحر.", category: "آثار ساحلية" },
+  { src: riskMap.url, title: "خريطة الخطر الزلزالي في الجزائر", description: "توضح تركز الخطر الأكبر في الشريط الشمالي وتدرجه نحو الجنوب.", category: "توزع الخطر" },
+];
 
 const stages = [
   { id: "start", short: "الانطلاق", kicker: "الوضعية الانطلاقية للمقطع", title: "هل سطح الأرض ثابت حقاً؟", subtitle: "براكين، زلازل، فيضانات وطرق متشققة: شواهد على نشاط داخلي مستمر." },
@@ -61,6 +80,56 @@ function QA({ items }: { items: { q: string; a: React.ReactNode }[] }) {
   );
 }
 
+function EffectsGallery() {
+  const [selected, setSelected] = useState<(typeof effectImages)[number] | null>(null);
+  return (
+    <>
+      <section className="mt-10" aria-labelledby="effects-gallery-title">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
+          <div>
+            <p className="text-sm font-black text-primary">وثائق النشاط 1</p>
+            <h3 id="effects-gallery-title" className="mt-1 text-2xl font-black">اقرأ آثار الزلزال من الصور</h3>
+          </div>
+          <p className="text-sm font-bold text-muted-foreground">اضغط على أي وثيقة لتكبيرها</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {effectImages.map((image, index) => (
+            <Button
+              key={image.title}
+              type="button"
+              variant="outline"
+              onClick={() => setSelected(image)}
+              className={`group relative h-auto min-h-80 w-full flex-col items-stretch justify-start overflow-hidden whitespace-normal p-0 text-right ${index === 0 || index === 7 ? "sm:col-span-2" : ""}`}
+            >
+              <span className="relative block aspect-[4/3] w-full overflow-hidden bg-secondary">
+                <img src={image.src} alt={image.title} className="size-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
+                <span className="absolute left-3 top-3 grid size-9 place-items-center bg-background/90 text-primary shadow-sm backdrop-blur"><Maximize2 className="size-4" /></span>
+              </span>
+              <span className="block w-full p-4">
+                <span className="text-xs font-black text-primary">{image.category}</span>
+                <span className="mt-1 block text-lg font-black text-foreground">{image.title}</span>
+                <span className="mt-2 block text-sm font-medium leading-7 text-muted-foreground">{image.description}</span>
+              </span>
+            </Button>
+          ))}
+        </div>
+      </section>
+      {selected && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 p-3 backdrop-blur sm:p-8" role="dialog" aria-modal="true" aria-label={selected.title}>
+          <div className="mx-auto mb-3 flex w-full max-w-6xl items-center justify-between gap-3">
+            <div><p className="text-xs font-black text-primary">{selected.category}</p><h3 className="text-lg font-black sm:text-2xl">{selected.title}</h3></div>
+            <Button type="button" variant="secondary" onClick={() => setSelected(null)}><X /> إغلاق</Button>
+          </div>
+          <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 place-items-center overflow-hidden bg-card">
+            <img src={selected.src} alt={selected.title} className="max-h-full max-w-full object-contain" />
+          </div>
+          <p className="mx-auto mt-3 w-full max-w-6xl text-center text-sm font-bold leading-7 text-muted-foreground sm:text-base">{selected.description}</p>
+        </div>
+      )}
+    </>
+  );
+}
+
 function StartStage() {
   const cards = [
     { t: "بركان نشط", d: "مظهر من مظاهر النشاط الداخلي." },
@@ -98,16 +167,19 @@ function ProblemStage() {
 
 function EffectsStage() {
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
-      <QA items={[
-        { q: "استخرج المظاهر التي خلفها زلزال بومرداس.", a: <p>انهيار المباني والمنشآت (خسائر مادية)، موت وإصابة الأشخاص (خسائر بشرية).</p> },
-        { q: "فسّر تباين آثار الزلزال كلما ابتعدنا عن موقعه (الصور 1، 2، 3)، وأثره في نفس الموقع (الصورة 4).", a: <p>تقل الخسائر كلما ابتعدنا عن موقع الزلزال (تباين الشدة من منطقة لأخرى)، أما في نفس الموقع فالأثر مرتبط بمقاومة البناية للهزات.</p> },
-        { q: "ما هدف تدخل فرق الإنقاذ (الصورتان 5، 6)؟", a: <p>إنقاذ من هم تحت الركام، إسعاف الجرحى، منع اندلاع الحرائق وحماية المنطقة.</p> },
-        { q: "استخرج آثار الزلزال خارج المناطق العمرانية (الوثيقة 2).", a: <p>انهيار الطرق والسكك الحديدية، تشققات على سطح الأرض، انحسار مياه البحر (تسونامي).</p> },
-        { q: "من مقتطف الجريدة (الوثيقة 3): استخرج خصائص الزلزال وعلّق على سلوك السكان.", a: <p>المركز في البحر على بعد <strong>19 km</strong> من بولوغين، شدته <strong>5.6</strong> على سلم ريشتر، تلته هزة ارتدادية 4.6 ونحو 30 هزة ارتدادية. وقع ضحايا بسبب سلوكات غير سوية (انعدام الثقافة الزلزالية).</p> },
-        { q: "بناءً على ما توصلت إليه، قدّم تعريفاً للزلزال.", a: <p><strong>الزلزال</strong> ظاهرة طبيعية تحدث فجأة، تتجلى في هزات أرضية سريعة متكررة متباينة الشدة، تسبب تشوهات للقشرة الأرضية وخسائر مادية وبشرية تزداد فداحتها بنقص الوعي والثقافة الزلزالية.</p> },
-      ]} />
-      <div className="space-y-4"><SourceDocument index={1} caption="النشاط 1 — التعليمات والإجابات" /><SourceDocument index={2} caption="الاستنتاج ونشاط 2" /></div>
+    <div>
+      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
+        <QA items={[
+          { q: "استخرج المظاهر التي خلفها زلزال بومرداس.", a: <p>انهيار المباني والمنشآت (خسائر مادية)، موت وإصابة الأشخاص (خسائر بشرية).</p> },
+          { q: "فسّر تباين آثار الزلزال كلما ابتعدنا عن موقعه، وأثره في نفس الموقع.", a: <p>تقل الخسائر كلما ابتعدنا عن موقع الزلزال (تباين الشدة من منطقة لأخرى)، أما في نفس الموقع فالأثر مرتبط بمقاومة البناية للهزات.</p> },
+          { q: "ما هدف تدخل فرق الإنقاذ؟", a: <p>إنقاذ من هم تحت الركام، إسعاف الجرحى، منع اندلاع الحرائق وحماية المنطقة.</p> },
+          { q: "استخرج آثار الزلزال خارج المناطق العمرانية من الوثائق المصوّرة.", a: <p>انهيار الطرق وتشوه السكك الحديدية، تشققات على سطح الأرض، وتغير مفاجئ في مياه البحر قد ترافقه أمواج تسونامي.</p> },
+          { q: "من مقتطف الجريدة (الوثيقة 3): استخرج خصائص الزلزال وعلّق على سلوك السكان.", a: <p>المركز في البحر على بعد <strong>19 km</strong> من بولوغين، شدته <strong>5.6</strong> على سلم ريشتر، تلته هزة ارتدادية 4.6 ونحو 30 هزة ارتدادية. وقع ضحايا بسبب سلوكات غير سوية (انعدام الثقافة الزلزالية).</p> },
+          { q: "بناءً على ما توصلت إليه، قدّم تعريفاً للزلزال.", a: <p><strong>الزلزال</strong> ظاهرة طبيعية تحدث فجأة، تتجلى في هزات أرضية سريعة متكررة متباينة الشدة، تسبب تشوهات للقشرة الأرضية وخسائر مادية وبشرية تزداد فداحتها بنقص الوعي والثقافة الزلزالية.</p> },
+        ]} />
+        <div className="space-y-4"><SourceDocument index={1} caption="النشاط 1 — التعليمات والإجابات" /><SourceDocument index={2} caption="الاستنتاج ونشاط 2" /></div>
+      </div>
+      <EffectsGallery />
     </div>
   );
 }
