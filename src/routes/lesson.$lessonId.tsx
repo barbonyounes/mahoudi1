@@ -84,7 +84,12 @@ function LessonPage() {
   if (lesson.id === "eq-phenomenon" && !teacherChangedLesson) {
     return <EarthquakeJourney lesson={lesson} />;
   }
-  return <LessonStage lesson={lesson} />;
+  return (
+    <>
+      <LessonStage lesson={lesson} />
+      {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
+    </>
+  );
 }
 
 function LessonStage({ lesson }: { lesson: LessonDef }) {
