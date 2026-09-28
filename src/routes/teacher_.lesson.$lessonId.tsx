@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Copy, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, ExternalLink, Eye, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -111,7 +111,11 @@ function LessonEditorPage() {
           </div>
         </div>
 
-        <h1 className="mt-4 text-2xl font-bold text-primary">محرر الحصة</h1>
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+          <div><p className="text-sm font-bold text-primary">تعديل مباشر للحصة</p><h1 className="text-2xl font-bold">{lesson.title}</h1></div>
+          <Button asChild><Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }} target="_blank"><Eye className="size-4" /> فتح العرض المخصص</Link></Button>
+        </div>
+        {lesson.id === "eq-phenomenon" ? <p className="mt-3 border-r-4 border-primary bg-primary/10 p-4 text-sm font-bold leading-7">يمكنك تعديل بيانات الحصة، ترتيب المحطات والنشاطات، وإضافة الوثائق في موضعها. تبقى الحصة في عرض الزلازل المخصص بعد الحفظ.</p> : null}
 
         <section className="mt-6 rounded-3xl border-2 border-border bg-secondary/25 p-5">
           <h2 className="mb-4 font-bold">بيانات الحصة</h2>
@@ -208,7 +212,7 @@ function StationEditor({
   onDuplicate: () => void;
   onMove: (dir: -1 | 1) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(station.id === "start");
   const patch = (p: Partial<Station>) => onChange({ ...station, ...p });
 
   const setBlocks = (blocks: Block[]) => patch({ blocks });
