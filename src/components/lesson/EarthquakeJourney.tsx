@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Activity, ArrowLeft, ArrowRight, ChevronLeft, Home, ImageIcon, MapPin, Maximize2, RotateCcw, Sparkles, Waves, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BlockView } from "@/components/lesson/ContentBlocks";
 import type { LessonDef } from "@/data/lesson";
 import p3 from "@/assets/eq-docs/p-03.jpg.asset.json";
 import p4 from "@/assets/eq-docs/p-04.jpg.asset.json";
@@ -316,7 +317,7 @@ function SynthesisStage() {
 
 const stageViews = [StartStage, ProblemStage, EffectsStage, EpicenterStage, FocusStage, AfricaStage, SynthesisStage];
 
-export function EarthquakeJourney({ lesson }: { lesson: LessonDef }) {
+export function EarthquakeJourney({ lesson, customized = false }: { lesson: LessonDef; customized?: boolean }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [showSources, setShowSources] = useState(false);
@@ -343,6 +344,22 @@ export function EarthquakeJourney({ lesson }: { lesson: LessonDef }) {
       <main className="mx-auto max-w-[1500px] px-4 pb-28 pt-8 sm:px-8 sm:pt-12">
         <section className="mb-9 border-b-2 border-border pb-7"><div className="flex items-center gap-3 text-sm font-black text-primary"><span className="grid size-9 place-items-center bg-primary text-primary-foreground">{index + 1}</span>{stage.kicker}</div><h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">{stage.title}</h2><p className="mt-3 max-w-4xl text-lg leading-8 text-muted-foreground sm:text-xl">{stage.subtitle}</p></section>
         <StageView />
+        {customized && lesson.stations[index] ? (
+          <section className="mt-12 border-t-2 border-primary pt-8" aria-label="محتوى الأستاذ المخصص">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div><p className="text-sm font-black text-primary">تخصيص الأستاذ · {lesson.stations[index].kicker}</p><h3 className="mt-1 text-2xl font-black">{lesson.stations[index].title}</h3></div>
+              <span className="border border-border bg-secondary px-3 py-2 text-sm font-bold">{lesson.stations[index].minutes} دقائق</span>
+            </div>
+            <div className="space-y-5">
+              {lesson.stations[index].blocks.map((block, blockIndex) => (
+                <div key={`${lesson.stations[index]?.id}-${blockIndex}`} className="border border-border bg-card p-5 sm:p-7">
+                  <BlockView block={block} terms={lesson.terms} quizId={`earthquake-custom-${index}-${blockIndex}`} onAnswer={() => undefined} onStartActivityTimer={() => undefined} />
+                </div>
+              ))}
+              {lesson.stations[index].blocks.length === 0 ? <p className="border border-dashed border-border p-6 text-center text-muted-foreground">هذه المحطة بلا عناصر. أضف نشاطاً أو وثيقة من مساحة الأستاذ.</p> : null}
+            </div>
+          </section>
+        ) : null}
       </main>
       <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-3 py-3 backdrop-blur"><div className="mx-auto flex max-w-[1500px] items-center justify-between gap-3"><Button type="button" variant="outline" size="lg" onClick={() => move(index - 1)} disabled={index === 0}><ArrowRight /> السابق</Button><span className="hidden text-sm font-bold text-muted-foreground sm:block">{index + 1} / {stages.length}</span>{index < stages.length - 1 ? <Button type="button" size="lg" onClick={() => move(index + 1)}>التالي <ArrowLeft /></Button> : <Button type="button" size="lg" onClick={() => move(0)}><RotateCcw /> إعادة الدرس</Button>}</div></footer>
       {showSources && <div className="fixed inset-0 z-[90] overflow-y-auto bg-background/95 p-4 backdrop-blur sm:p-8"><div className="mx-auto max-w-6xl"><div className="mb-6 flex items-center justify-between"><div><p className="text-sm font-bold text-primary">مذكرة الأستاذين محمودي ومريخ</p><h2 className="text-2xl font-black">الصفحات الأصلية</h2></div><Button type="button" variant="secondary" onClick={() => setShowSources(false)}><X /> إغلاق</Button></div><div className="grid gap-5 md:grid-cols-2">{documents.map((src, i) => <figure key={src} className="border border-border bg-card p-3"><img src={src} alt={`صفحة المذكرة ${i + 3}`} className="w-full object-contain" loading="lazy" /><figcaption className="pt-3 text-center font-bold">صفحة {i + 3}</figcaption></figure>)}</div></div></div>}
