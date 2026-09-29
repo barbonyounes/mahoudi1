@@ -85,7 +85,7 @@ function LessonPage() {
   if (lesson.id === "eq-phenomenon") {
     return (
       <>
-        <EarthquakeJourney lesson={lesson} />
+        <EarthquakeJourney lesson={lesson} customized={teacherChangedLesson} />
         {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
       </>
     );
