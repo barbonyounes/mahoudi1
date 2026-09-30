@@ -12,9 +12,11 @@ import {
   Maximize2,
   RotateCcw,
   Sparkles,
+  Target,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BlockView } from "@/components/lesson/ContentBlocks";
 import type { LessonDef } from "@/data/lesson";
 import digestiveSystem from "@/assets/digestive-system.jpg";
 import starchExperiment from "@/assets/starch-digestion-experiment.jpg";
@@ -23,6 +25,11 @@ import document2 from "@/assets/digestion-docs/document-2.jpeg.asset.json";
 import document3 from "@/assets/digestion-docs/document-3.jpeg.asset.json";
 import document4 from "@/assets/digestion-docs/document-4.jpeg.asset.json";
 import document5 from "@/assets/digestion-docs/document-5.jpeg.asset.json";
+import digestiveSystemReal from "@/assets/digestion-real/digestive-system.svg.asset.json";
+import salivaryGlands from "@/assets/digestion-real/salivary-glands.png.asset.json";
+import iodineStarch from "@/assets/digestion-real/iodine-starch.jpg.asset.json";
+import stomachHistology from "@/assets/digestion-real/stomach-histology.jpg.asset.json";
+import intestinalVilli from "@/assets/digestion-real/intestinal-villi-photo.jpg.asset.json";
 
 const documents = [document1.url, document2.url, document3.url, document4.url, document5.url];
 
@@ -82,6 +89,41 @@ function SourceDocument({ index, caption }: { index: number; caption: string }) 
   );
 }
 
+type ActivityDocumentProps = {
+  number: string;
+  title: string;
+  instruction: string;
+  image: string;
+  imageAlt: string;
+  questions: string[];
+  conclusion: React.ReactNode;
+  source: string;
+};
+
+function ActivityDocument({ number, title, instruction, image, imageAlt, questions, conclusion, source }: ActivityDocumentProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <article className="border border-border bg-card shadow-sm">
+      <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="relative min-h-72 overflow-hidden border-b border-border bg-secondary/30 lg:border-b-0 lg:border-l">
+          <button type="button" onClick={() => setOpen(true)} className="group h-full w-full text-right" aria-label={`تكبير ${imageAlt}`}>
+            <img src={image} alt={imageAlt} className="h-full min-h-72 w-full object-contain p-3 transition duration-300 group-hover:scale-[1.02]" loading="lazy" />
+            <span className="absolute bottom-3 left-3 grid size-10 place-items-center bg-background/90 shadow"><Maximize2 className="size-5 text-primary" /></span>
+          </button>
+          <p className="border-t border-border bg-background px-4 py-3 text-xs leading-6 text-muted-foreground">المصدر: {source}</p>
+        </div>
+        <div className="p-5 sm:p-7">
+          <div className="flex items-center gap-3"><span className="grid size-11 shrink-0 place-items-center bg-primary font-black text-primary-foreground">{number}</span><div><p className="text-sm font-black text-primary">نشاط وثائقي</p><h3 className="text-2xl font-black">{title}</h3></div></div>
+          <div className="mt-6 border-r-4 border-accent bg-accent/10 p-5"><p className="text-sm font-black text-accent">التعليمة</p><p className="mt-2 text-lg font-bold leading-8">{instruction}</p></div>
+          <ol className="mt-6 space-y-3">{questions.map((question, index) => <li key={question} className="flex gap-3 leading-8"><span className="grid size-7 shrink-0 place-items-center bg-secondary text-sm font-black">{index + 1}</span><span>{question}</span></li>)}</ol>
+          <div className="mt-6"><Reveal label="كشف استنتاج النشاط">{conclusion}</Reveal></div>
+        </div>
+      </div>
+      {open ? <div className="fixed inset-0 z-[100] grid place-items-center bg-background/95 p-3 backdrop-blur" role="dialog" aria-modal="true"><Button type="button" variant="secondary" onClick={() => setOpen(false)} className="absolute left-4 top-4 z-10"><X /> إغلاق</Button><img src={image} alt={imageAlt} className="max-h-[92vh] max-w-full object-contain" /></div> : null}
+    </article>
+  );
+}
+
 function StoryStage() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -113,6 +155,7 @@ function MouthStage() {
           <article key={item.n} className="border-t-4 border-primary bg-card p-6 shadow-sm"><span className="text-sm font-black text-primary">{item.n}</span><h3 className="mt-3 text-xl font-black">{item.t}</h3><p className="mt-3 leading-8 text-foreground/75">{item.d}</p></article>
         ))}
       </div>
+      <ActivityDocument number="1" title="من أين يأتي اللعاب؟" instruction="لاحظ الوثيقة وحدد مواقع الغدد اللعابية، ثم اربط إفرازها بتغير قوام وطعم الخبز أثناء المضغ." image={salivaryGlands.url} imageAlt="صورة تشريحية حقيقية لمواضع الغدد اللعابية" source="Wikimedia Commons — Glandes salivaires، ترخيص CC0" questions={["سمّ الغدد اللعابية الثلاث الظاهرة في الوثيقة.", "ما السائل الذي تصبه هذه الغدد داخل الفم؟", "اقترح تفسيراً لاكتساب الخبز مذاقاً حلواً بعد المضغ الطويل."]} conclusion={<p>تفرز الغدد اللعابية اللعاب داخل الفم؛ يبلل الغذاء ويحتوي على إنزيم الأميلاز الذي يبدأ تحويل النشاء إلى سكر المالتوز.</p>} />
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="bg-secondary/50 p-6">
           <p className="text-sm font-black text-primary">تعليمة النشاط</p>
@@ -131,11 +174,13 @@ function LabStage() {
     ? { title: "الأنبوب الشاهد", mix: "مطبوخ النشاء + ماء عند 37°م", iodine: "أزرق بنفسجي", fehling: "يبقى أزرق", result: "النشاء موجود، ولا يوجد سكر مختزل." }
     : { title: "أنبوب التجربة", mix: "مطبوخ النشاء + لعاب عند 37°م", iodine: "لا يظهر الأزرق", fehling: "راسب أحمر آجري", result: "اختفى النشاء وظهر سكر مختزل." };
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="space-y-8">
+      <ActivityDocument number="2" title="هل اختفى النشاء؟" instruction="قارن لون العينة قبل إضافة اللعاب وبعد حضنها معه عند 37°م، واستعمل ماء اليود دليلاً كيميائياً." image={iodineStarch.url} imageAlt="صورة حقيقية لتفاعل النشاء مع اليود" source="Wikimedia Commons — Potassium iodide starch، ترخيص CC BY-SA 4.0" questions={["صف لون اختبار اليود عندما يكون النشاء موجوداً.", "لماذا نحتاج أنبوباً شاهداً لا يحتوي على اللعاب؟", "ما الذي يدل عليه اختفاء اللون الأزرق البنفسجي بعد إضافة اللعاب؟"]} conclusion={<p>ماء اليود يكشف النشاء بلون أزرق داكن. اختفاء اللون في أنبوب اللعاب عند 37°م دليل على تحول النشاء.</p>} />
+      <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
       <div className="overflow-hidden border border-border bg-card">
         <img src={starchExperiment} alt="تجربة الهضم الاصطناعي للنشاء في حمام مائي" width={1600} height={1008} className="aspect-[16/10] w-full object-cover" />
         <p className="border-t border-border px-5 py-3 text-sm text-muted-foreground">حمام مائي عند 37°م يحاكي حرارة الجسم، وماء اليود وفهلنج يكشفان المواد.</p>
-      </div>
+      </div></div>
       <div>
         <div className="grid grid-cols-2 gap-2 bg-secondary p-1">
           <Button type="button" variant={selected === "control" ? "default" : "ghost"} className="h-12" onClick={() => setSelected("control")}>الأنبوب الشاهد</Button>
@@ -160,6 +205,7 @@ function StomachStage() {
   ];
   return (
     <div className="space-y-7">
+      <ActivityDocument number="3" title="جدار المعدة نسيج إفرازي" instruction="لاحظ المقطع المجهري الحقيقي لجدار المعدة، ثم استخرج العلاقة بين بنيته وإفراز العصارة المعدية." image={stomachHistology.url} imageAlt="مقطع نسيجي حقيقي لجدار المعدة" source="Wikimedia Commons — Histology of Stomach، صورة تعليمية مفتوحة" questions={["صف شكل السطح الداخلي لجدار المعدة.", "ماذا توحي كثرة التجاويف والغدد في هذا الجدار؟", "لماذا لا يكفي اللعاب لهضم البروتينات داخل المعدة؟"]} conclusion={<p>يحتوي جدار المعدة على غدد تفرز عصارة معدية حامضية؛ يعمل إنزيم البيبسين فيها على البروتينات، بينما يتوقف الأميلاز اللعابي.</p>} />
       <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
         <SourceDocument index={1} caption="السند — المعدة وتجربة الغلوتين" />
         <div className="overflow-x-auto border border-border bg-card"><table className="w-full min-w-[660px] text-right"><thead className="bg-primary text-primary-foreground"><tr><th className="p-4">محتوى الأنبوب</th><th className="p-4">الملاحظة</th><th className="p-4">الدلالة</th></tr></thead><tbody>{rows.map((r) => <tr key={r[0]} className="border-t border-border"><td className="p-4 font-bold">{r[0]}</td><td className="p-4">{r[1]}</td><td className="p-4 text-muted-foreground">{r[2]}</td></tr>)}</tbody></table></div>
@@ -180,6 +226,7 @@ function IntestineStage() {
     <div className="space-y-7">
       <div className="grid gap-5 md:grid-cols-3">{juices.map((j, i) => <article key={j.name} className="relative overflow-hidden border border-border bg-card p-6"><span className="absolute left-3 top-2 text-5xl font-black text-primary/10">{i + 1}</span><p className="text-sm font-bold text-primary">{j.organ}</p><h3 className="mt-3 text-xl font-black">{j.name}</h3><p className="mt-4 leading-8 text-foreground/75">{j.work}</p></article>)}</div>
       <div className="grid gap-6 lg:grid-cols-2"><SourceDocument index={2} caption="الوثيقة الأصلية — الغدد الملحقة والعصارات" /><SourceDocument index={3} caption="الوثيقة الأصلية — حوصلة مستويات الهضم" /></div>
+      <ActivityDocument number="4" title="لماذا سطح المعي غير أملس؟" instruction="افحص الصورة المجهرية لجدار المعي الدقيق، وحدد البنيات التي تزيد مساحة التماس مع المغذيات." image={intestinalVilli.url} imageAlt="صورة مجهرية حقيقية لزغابات المعي الدقيق" source="Wikimedia Commons — Histology Small Intestines، صورة تعليمية مفتوحة" questions={["صف شكل جدار المعي الدقيق في الصورة.", "قارن سطحاً كثير الطيات بسطح أملس من حيث مساحة التبادل.", "اربط هذه البنية بمصير الغلوكوز الناتج عن هضم النشاء."]} conclusion={<p>الزغابات المعوية تزيد مساحة الامتصاص؛ ينتقل الغلوكوز والأحماض الأمينية عبرها إلى الدم بعد إتمام الهضم.</p>} />
       <Reveal label="كشف نواتج الهضم النهائية"><div className="grid gap-3 sm:grid-cols-3"><p><strong>النشاء</strong><br />غلوكوز</p><p><strong>البروتينات</strong><br />أحماض أمينية</p><p><strong>الدسم</strong><br />أحماض دسمة + غليسرول</p></div></Reveal>
     </div>
   );
@@ -203,7 +250,7 @@ function MapStage() {
   const organs = ["الفم", "المريء", "المعدة", "الكبد", "المرارة", "البنكرياس", "المعي الدقيق", "المعي الغليظ"];
   return (
     <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-      <figure className="border border-border bg-card p-4"><img src={digestiveSystem} alt="رسم علمي للجهاز الهضمي والغدد الملحقة" width={1200} height={1504} className="max-h-[64vh] w-full object-contain" /><figcaption className="border-t border-border pt-3 text-center text-sm text-muted-foreground">الدعامة التشريحية للجهاز الهضمي والغدد الملحقة</figcaption></figure>
+      <figure className="border border-border bg-card p-4"><img src={digestiveSystemReal.url} alt="وثيقة تشريحية للجهاز الهضمي والغدد الملحقة" className="max-h-[64vh] w-full object-contain" /><figcaption className="border-t border-border pt-3 text-center text-sm leading-6 text-muted-foreground">وثيقة تشريحية مفتوحة — Wikimedia Commons، Digestive system diagram</figcaption></figure>
       <div>
         <div className="flex flex-wrap gap-2">{organs.map((organ, i) => <span key={organ} className="inline-flex items-center gap-2 border border-border bg-secondary/60 px-3 py-2 font-bold"><span className="grid size-6 place-items-center bg-primary text-xs text-primary-foreground">{i + 1}</span>{organ}</span>)}</div>
         <div className="mt-6 border-r-4 border-success bg-success/10 p-6"><h3 className="text-xl font-black">المعنى البيولوجي للهضم</h3><p className="mt-3 text-lg leading-9">تبسيط جزيئي للأغذية العضوية المركبة بواسطة إنزيمات متخصصة، وتحويلها إلى مغذيات بسيطة قابلة للامتصاص.</p></div>
