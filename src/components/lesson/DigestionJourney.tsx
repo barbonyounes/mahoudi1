@@ -277,9 +277,9 @@ export function DigestionJourney({ lesson, customized = false }: { lesson: Lesso
   const [showSources, setShowSources] = useState(false);
   const stage = stages[index];
   const StageView = stageViews[index];
-  const stageStations = lesson.stations.filter((station) => (stageStationIds[stage.id] ?? []).includes(station.id));
   const progress = useMemo(() => ((index + 1) / stages.length) * 100, [index]);
   if (!stage || !StageView) return null;
+  const stageStations = lesson.stations.filter((station) => (stageStationIds[stage.id] ?? []).includes(station.id));
 
   const move = (next: number) => {
     setIndex(Math.min(stages.length - 1, Math.max(0, next)));
