@@ -79,8 +79,8 @@ function LessonPage() {
   const teacherChangedLesson = Boolean(
     workspace && fallback && JSON.stringify(lesson) !== JSON.stringify(fallback),
   );
-  if (lesson.id === "dig-mouth" && !teacherChangedLesson) {
-    return <DigestionJourney lesson={lesson} />;
+  if (lesson.id === "dig-mouth") {
+    return <><DigestionJourney lesson={lesson} customized={teacherChangedLesson} />{teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}</>;
   }
   if (lesson.id === "eq-phenomenon") {
     return (
