@@ -12,13 +12,11 @@ import {
   Maximize2,
   RotateCcw,
   Sparkles,
-  Target,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlockView } from "@/components/lesson/ContentBlocks";
 import type { LessonDef } from "@/data/lesson";
-import digestiveSystem from "@/assets/digestive-system.jpg";
 import starchExperiment from "@/assets/starch-digestion-experiment.jpg";
 import document1 from "@/assets/digestion-docs/document-1.jpeg.asset.json";
 import document2 from "@/assets/digestion-docs/document-2.jpeg.asset.json";
@@ -50,6 +48,16 @@ const stages: Stage[] = [
   { id: "enzyme", short: "الإنزيم", kicker: "النشاط 3", title: "الإنزيم: عامل حيّ ونوعي", subtitle: "نستنتج خاصيتي السرعة والتخصص من نتائج التجارب." },
   { id: "map", short: "الحوصلة", kicker: "الدعامة التشريحية والتقويم", title: "رحلة الغذاء كاملة", subtitle: "نربط الأعضاء بالعصارات ونواتج الهضم والمعنى البيولوجي." },
 ];
+
+const stageStationIds: Record<string, string[]> = {
+  story: ["start", "hypotheses"],
+  mouth: ["task"],
+  lab: ["experiment", "analysis"],
+  stomach: [],
+  intestine: [],
+  enzyme: ["summary"],
+  map: ["copy", "evaluation", "integration"],
+};
 
 function Reveal({ label = "كشف المناقشة", children }: { label?: string; children: React.ReactNode }) {
   const [shown, setShown] = useState(false);
@@ -177,21 +185,22 @@ function LabStage() {
     <div className="space-y-8">
       <ActivityDocument number="2" title="هل اختفى النشاء؟" instruction="قارن لون العينة قبل إضافة اللعاب وبعد حضنها معه عند 37°م، واستعمل ماء اليود دليلاً كيميائياً." image={iodineStarch.url} imageAlt="صورة حقيقية لتفاعل النشاء مع اليود" source="Wikimedia Commons — Potassium iodide starch، ترخيص CC BY-SA 4.0" questions={["صف لون اختبار اليود عندما يكون النشاء موجوداً.", "لماذا نحتاج أنبوباً شاهداً لا يحتوي على اللعاب؟", "ما الذي يدل عليه اختفاء اللون الأزرق البنفسجي بعد إضافة اللعاب؟"]} conclusion={<p>ماء اليود يكشف النشاء بلون أزرق داكن. اختفاء اللون في أنبوب اللعاب عند 37°م دليل على تحول النشاء.</p>} />
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-      <div className="overflow-hidden border border-border bg-card">
-        <img src={starchExperiment} alt="تجربة الهضم الاصطناعي للنشاء في حمام مائي" width={1600} height={1008} className="aspect-[16/10] w-full object-cover" />
-        <p className="border-t border-border px-5 py-3 text-sm text-muted-foreground">حمام مائي عند 37°م يحاكي حرارة الجسم، وماء اليود وفهلنج يكشفان المواد.</p>
-      </div></div>
-      <div>
-        <div className="grid grid-cols-2 gap-2 bg-secondary p-1">
-          <Button type="button" variant={selected === "control" ? "default" : "ghost"} className="h-12" onClick={() => setSelected("control")}>الأنبوب الشاهد</Button>
-          <Button type="button" variant={selected === "saliva" ? "default" : "ghost"} className="h-12" onClick={() => setSelected("saliva")}>مع اللعاب</Button>
+        <div className="overflow-hidden border border-border bg-card">
+          <img src={starchExperiment} alt="تجربة الهضم الاصطناعي للنشاء في حمام مائي" width={1600} height={1008} className="aspect-[16/10] w-full object-cover" />
+          <p className="border-t border-border px-5 py-3 text-sm text-muted-foreground">حمام مائي عند 37°م يحاكي حرارة الجسم، وماء اليود وفهلنج يكشفان المواد.</p>
         </div>
-        <div className="mt-4 border border-border bg-card p-6">
-          <p className="text-sm font-black text-primary">{data.title}</p><h3 className="mt-2 text-xl font-bold">{data.mix}</h3>
-          <dl className="mt-6 grid gap-3 sm:grid-cols-2"><div className="bg-secondary/60 p-4"><dt className="text-sm text-muted-foreground">مع ماء اليود</dt><dd className="mt-1 font-black">{data.iodine}</dd></div><div className="bg-secondary/60 p-4"><dt className="text-sm text-muted-foreground">مع فهلنج والتسخين</dt><dd className="mt-1 font-black">{data.fehling}</dd></div></dl>
-          <p className="mt-5 border-r-4 border-accent bg-accent/10 p-4 text-lg font-bold">{data.result}</p>
+        <div>
+          <div className="grid grid-cols-2 gap-2 bg-secondary p-1">
+            <Button type="button" variant={selected === "control" ? "default" : "ghost"} className="h-12" onClick={() => setSelected("control")}>الأنبوب الشاهد</Button>
+            <Button type="button" variant={selected === "saliva" ? "default" : "ghost"} className="h-12" onClick={() => setSelected("saliva")}>مع اللعاب</Button>
+          </div>
+          <div className="mt-4 border border-border bg-card p-6">
+            <p className="text-sm font-black text-primary">{data.title}</p><h3 className="mt-2 text-xl font-bold">{data.mix}</h3>
+            <dl className="mt-6 grid gap-3 sm:grid-cols-2"><div className="bg-secondary/60 p-4"><dt className="text-sm text-muted-foreground">مع ماء اليود</dt><dd className="mt-1 font-black">{data.iodine}</dd></div><div className="bg-secondary/60 p-4"><dt className="text-sm text-muted-foreground">مع فهلنج والتسخين</dt><dd className="mt-1 font-black">{data.fehling}</dd></div></dl>
+            <p className="mt-5 border-r-4 border-accent bg-accent/10 p-4 text-lg font-bold">{data.result}</p>
+          </div>
+          <div className="mt-5"><Reveal label="كشف الاستنتاج النهائي"><p>يحتوي اللعاب على إنزيم <strong>الأميلاز اللعابي</strong> الذي يفكك النشاء إلى مالتوز. هذا تحول كيميائي، بخلاف المضغ الذي يمثل تحولاً آلياً.</p></Reveal></div>
         </div>
-        <div className="mt-5"><Reveal label="كشف الاستنتاج النهائي"><p>يحتوي اللعاب على إنزيم <strong>الأميلاز اللعابي</strong> الذي يفكك النشاء إلى مالتوز. هذا تحول كيميائي، بخلاف المضغ الذي يمثل تحولاً آلياً.</p></Reveal></div>
       </div>
     </div>
   );
@@ -262,7 +271,7 @@ function MapStage() {
 
 const stageViews = [StoryStage, MouthStage, LabStage, StomachStage, IntestineStage, EnzymeStage, MapStage];
 
-export function DigestionJourney({ lesson }: { lesson: LessonDef }) {
+export function DigestionJourney({ lesson, customized = false }: { lesson: LessonDef; customized?: boolean }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [showSources, setShowSources] = useState(false);
@@ -270,6 +279,7 @@ export function DigestionJourney({ lesson }: { lesson: LessonDef }) {
   const StageView = stageViews[index];
   const progress = useMemo(() => ((index + 1) / stages.length) * 100, [index]);
   if (!stage || !StageView) return null;
+  const stageStations = lesson.stations.filter((station) => (stageStationIds[stage.id] ?? []).includes(station.id));
 
   const move = (next: number) => {
     setIndex(Math.min(stages.length - 1, Math.max(0, next)));
@@ -282,7 +292,7 @@ export function DigestionJourney({ lesson }: { lesson: LessonDef }) {
         <div className="h-1 bg-secondary"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} /></div>
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-3 py-3 sm:px-6">
           <Button type="button" variant="ghost" size="icon" onClick={() => void navigate({ to: "/level/$levelId", params: { levelId: "4am" } })} aria-label="العودة إلى السنة الرابعة"><Home /></Button>
-          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">السنة الرابعة متوسط · رحلة الهضم</p><h1 className="truncate text-sm font-black sm:text-lg">تحولات الأغذية خلال الهضم</h1></div>
+          <div className="min-w-0 flex-1"><p className="text-xs font-bold text-primary">{lesson.level} · رحلة الهضم</p><h1 className="truncate text-sm font-black sm:text-lg">{lesson.title}</h1></div>
           <Button type="button" variant="outline" size="sm" onClick={() => setShowSources(true)}><ImageIcon /> <span className="hidden sm:inline">الوثائق الأصلية</span></Button>
           <Button type="button" variant="ghost" size="icon" onClick={() => document.fullscreenElement ? void document.exitFullscreen() : void document.documentElement.requestFullscreen()} aria-label="ملء الشاشة"><Maximize2 /></Button>
         </div>
@@ -295,6 +305,14 @@ export function DigestionJourney({ lesson }: { lesson: LessonDef }) {
       <main className="mx-auto max-w-[1500px] px-4 pb-28 pt-8 sm:px-8 sm:pt-12">
         <section className="mb-9 border-b-2 border-border pb-7"><div className="flex items-center gap-3 text-sm font-black text-primary"><span className="grid size-9 place-items-center bg-primary text-primary-foreground">{index + 1}</span>{stage.kicker}</div><h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">{stage.title}</h2><p className="mt-3 max-w-4xl text-lg leading-8 text-muted-foreground sm:text-xl">{stage.subtitle}</p></section>
         <StageView />
+        {customized && stageStations.length > 0 ? <section className="mt-12 border-t-2 border-primary pt-8" aria-label="أنشطة الأستاذ المخصصة">
+          <div className="mb-6"><p className="text-sm font-black text-primary">تخصيص الأستاذ</p><h3 className="mt-1 text-2xl font-black">أنشطة هذه المرحلة</h3></div>
+          <div className="space-y-7">{stageStations.map((station) => <article key={station.id} className="border border-border bg-card p-5 sm:p-7">
+            <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-sm font-black text-primary">{station.kicker}</p><h4 className="mt-1 text-xl font-black">{station.title}</h4></div><span className="bg-secondary px-3 py-2 text-sm font-bold">{station.minutes} دقائق</span></div>
+            {station.teacherNote ? <p className="mt-5 border-r-4 border-accent bg-accent/10 p-4 text-sm font-bold leading-7">ملاحظة الأستاذ: {station.teacherNote}</p> : null}
+            <div className="mt-6 space-y-5">{station.blocks.map((block, blockIndex) => <div key={`${station.id}-${blockIndex}`} className="border border-border bg-background p-4 sm:p-6"><BlockView block={block} terms={lesson.terms} quizId={`digestion-custom-${station.id}-${blockIndex}`} onAnswer={() => undefined} onStartActivityTimer={() => undefined} /></div>)}</div>
+          </article>)}</div>
+        </section> : null}
       </main>
 
       <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-3 py-3 backdrop-blur"><div className="mx-auto flex max-w-[1500px] items-center justify-between gap-3"><Button type="button" variant="outline" size="lg" onClick={() => move(index - 1)} disabled={index === 0}><ArrowRight /> السابق</Button><span className="hidden text-sm font-bold text-muted-foreground sm:block">{index + 1} / {stages.length}</span>{index < stages.length - 1 ? <Button type="button" size="lg" onClick={() => move(index + 1)}>التالي <ArrowLeft /></Button> : <Button type="button" size="lg" onClick={() => move(0)}><RotateCcw /> إعادة الدرس</Button>}</div></footer>
