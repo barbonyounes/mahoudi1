@@ -16,6 +16,8 @@ import { useGlossary } from "@/components/lesson/Glossary";
 import { Whiteboard } from "@/components/lesson/Whiteboard";
 import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import { EarthquakeJourney } from "@/components/lesson/EarthquakeJourney";
+import { EarthquakeCausesJourney } from "@/components/lesson/EarthquakeCausesJourney";
+import { DigestionLabJourney } from "@/components/lesson/DigestionLabJourney";
 import { RestoreOriginalButton } from "@/components/lesson/RestoreOriginalButton";
 import {
   BlackoutOverlay,
@@ -86,6 +88,22 @@ function LessonPage() {
     return (
       <>
         <EarthquakeJourney lesson={lesson} customized={teacherChangedLesson} />
+        {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
+      </>
+    );
+  }
+  if (lesson.id === "eq-causes") {
+    return (
+      <>
+        <EarthquakeCausesJourney lesson={lesson} customized={teacherChangedLesson} />
+        {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
+      </>
+    );
+  }
+  if (lesson.id === "dig-stomach") {
+    return (
+      <>
+        <DigestionLabJourney lesson={lesson} customized={teacherChangedLesson} />
         {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
       </>
     );
