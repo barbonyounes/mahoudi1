@@ -309,9 +309,9 @@ export function DigestiveSystemBuilder() {
                   <g key={slot.id}>
                     {done ? (
                       <g>
-                        <circle cx={slot.x} cy={slot.y} r="4.6" fill="var(--success)" opacity="0.92" />
-                        <text x={slot.x} y={slot.y + 0.9} textAnchor="middle" fontSize="3" fontWeight="800" fill="var(--success-foreground)">✓</text>
-                        <text x={slot.x} y={slot.y + 8} textAnchor="middle" fontSize="2.7" fontWeight="800" fill="var(--foreground)">{slot.label}</text>
+                        <circle cx={slot.x} cy={slot.y} r={si === state.stage ? 3.4 : 2} fill="var(--success)" opacity="0.92" />
+                        {si === state.stage && <text x={slot.x} y={slot.y + 0.9} textAnchor="middle" fontSize="2.6" fontWeight="800" fill="var(--success-foreground)">✓</text>}
+                        {si === state.stage && <text x={slot.x} y={slot.y + 6.2} textAnchor="middle" fontSize="2.4" fontWeight="800" fill="var(--foreground)" stroke="var(--background)" strokeWidth="0.5" paintOrder="stroke">{slot.label}</text>}
                       </g>
                     ) : isCurrent ? (
                       <g
@@ -323,7 +323,7 @@ export function DigestiveSystemBuilder() {
                         style={{ cursor: selected ? "pointer" : "default" }}
                       >
                         <circle
-                          cx={slot.x} cy={slot.y} r="4.6"
+                          cx={slot.x} cy={slot.y} r="3.6"
                           fill={showAnswer || selected ? "var(--primary)" : "var(--background)"}
                           fillOpacity={showAnswer || selected ? 0.35 : 0.7}
                           stroke="var(--primary)" strokeWidth="0.7" strokeDasharray="1.4 1.2"

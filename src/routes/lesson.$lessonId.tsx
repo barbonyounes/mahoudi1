@@ -18,6 +18,7 @@ import { DigestionJourney } from "@/components/lesson/DigestionJourney";
 import { EarthquakeJourney } from "@/components/lesson/EarthquakeJourney";
 import { EarthquakeCausesJourney } from "@/components/lesson/EarthquakeCausesJourney";
 import { DigestionLabJourney } from "@/components/lesson/DigestionLabJourney";
+import { DigestiveAnatomyJourney } from "@/components/lesson/DigestiveAnatomyJourney";
 import { RestoreOriginalButton } from "@/components/lesson/RestoreOriginalButton";
 import {
   BlackoutOverlay,
@@ -99,6 +100,9 @@ function LessonPage() {
         {teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}
       </>
     );
+  }
+  if (lesson.id === "dig-anatomy") {
+    return <><DigestiveAnatomyJourney lesson={lesson} customized={teacherChangedLesson} />{teacherChangedLesson && fallback ? <RestoreOriginalButton original={fallback} /> : null}</>;
   }
   if (lesson.id === "dig-stomach") {
     return (
