@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, CircleHelp, Maximize2, MousePointerClick, RotateCcw, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ANATOMY_PIECES, AnatomyBody, AnatomyOrgan, AnatomyThumbnail } from "./DigestiveAnatomyArt";
 
 /**
  * بازل الجهاز الهضمي: تركيب تفاعلي ثنائي الأبعاد على جسم إنسان أمامي.
@@ -64,6 +65,11 @@ const STAGES: StageDef[] = [
   },
 ];
 
+STAGES.forEach((stage) => stage.slots.forEach((slot) => {
+  const piece = ANATOMY_PIECES[slot.id];
+  if (piece) { slot.x = piece.x + piece.width / 2; slot.y = piece.y + piece.height / 2; }
+}));
+
 const TOTAL = STAGES.reduce((n, s) => n + s.slots.length, 0);
 const STORAGE_KEY = "svt-digestive-builder-v1";
 
@@ -74,14 +80,17 @@ function loadProgress(): { stage: number; placed: PlacedMap } {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { stage?: number; placed?: PlacedMap };
-      if (typeof parsed.stage === "number" && parsed.placed) return { stage: Math.min(parsed.stage, STAGES.length - 1), placed: parsed.placed };
+      if (typeof parsed.stage === "number" && Number.isInteger(parsed.stage) && parsed.placed) return { stage: Math.max(0, Math.min(parsed.stage, STAGES.length - 1)), placed: parsed.placed };
     }
   } catch { /* تجاهل */ }
   return { stage: 0, placed: {} };
 }
 
 export function DigestiveSystemBuilder() {
-  const [state, setState] = useState(loadProgress);
+  const [state, setState] = useState<{ stage: number; placed: PlacedMap }>({ stage: 0, placed: {} });
+  const boardRef = useRef<SVGSVGElement>(null);
+  const movedRef = useRef(false);
+  useEffect(() => { setState(loadProgress()); }, []);
   const [selected, setSelected] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
@@ -89,7 +98,8 @@ export function DigestiveSystemBuilder() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [referenceOpen, setReferenceOpen] = useState(false);
 
-  const stage = STAGES[state.stage]!;
+  const stage = STAGES[state.stage] ?? STAGES[0];
+  if (!stage) throw new Error("Missing anatomy stages");
   const placed = state.placed;
   const placedCount = useMemo(() => Object.values(placed).filter(Boolean).length, [placed]);
   const stageDone = stage.slots.every((s) => placed[s.id]);
@@ -117,30 +127,30 @@ export function DigestiveSystemBuilder() {
     [placed, stage, state.stage, persist],
   );
 
-  // سحب عبر Pointer Events فوق لوحة SVG
-  const onPointerMove = useCallback(
-    (e: React.PointerEvent<SVGSVGElement>) => {
-      if (!dragging) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      setDragPos({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
-    },
-    [dragging],
-  );
-
-  const onPointerUp = useCallback(
-    (e: React.PointerEvent<SVGSVGElement>) => {
-      if (!dragging) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      const hit = stage.slots.find((s) => Math.hypot(s.x - x, s.y - y) < 8);
+  const pointerPosition = (e: React.PointerEvent<HTMLElement>) => {
+    const rect = boardRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    return { x: (e.clientX - rect.left) / rect.width * 100, y: (e.clientY - rect.top) / rect.height * 100 };
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (!dragging || (e.buttons === 0 && e.pointerType === "mouse")) return;
+    movedRef.current = true;
+    setDragPos(pointerPosition(e));
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLElement>) => {
+    if (!dragging) return;
+    const pos = pointerPosition(e);
+    if (movedRef.current && pos) {
+      const hit = remaining.filter((slot) => {
+        const piece = ANATOMY_PIECES[slot.id];
+        return piece && pos.x >= piece.x - 2 && pos.x <= piece.x + piece.width + 2 && pos.y >= piece.y - 2 && pos.y <= piece.y + piece.height + 2;
+      }).sort((a, b) => Math.hypot(a.x - pos.x, a.y - pos.y) - Math.hypot(b.x - pos.x, b.y - pos.y))[0];
       if (hit) tryPlace(dragging, hit.id);
-      else setFeedback({ kind: "err", text: "أفلت القطعة فوق موضع مرقم داخل الجسم." });
-      setDragging(null);
-      setDragPos(null);
-    },
-    [dragging, stage, tryPlace],
-  );
+      else setFeedback({ kind: "err", text: "أفلت العضو فوق موضعه داخل الجسم." });
+    }
+    setDragging(null);
+    setDragPos(null);
+  };
 
   const hint = () => {
     const next = remaining[0];
@@ -178,7 +188,7 @@ export function DigestiveSystemBuilder() {
   }, [stageDone, state.stage, stage.label, placed, persist]);
 
   return (
-    <section dir="rtl" className="border border-border bg-card shadow-sm" aria-label="بازل تركيب الجهاز الهضمي">
+    <section onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { setDragging(null); setDragPos(null); }} dir="rtl" className="border border-border bg-card shadow-sm" aria-label="بازل تركيب الجهاز الهضمي">
       {/* شريط أدوات النشاط */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/40 px-4 py-3 sm:px-6">
         <div>
@@ -198,7 +208,7 @@ export function DigestiveSystemBuilder() {
       <div className="border-b border-border px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-center gap-2">
           {STAGES.map((s, i) => (
-            <button
+            <Button variant="outline"
               key={s.id}
               type="button"
               onClick={() => setState((prev) => ({ ...prev, stage: i }))}
@@ -210,7 +220,7 @@ export function DigestiveSystemBuilder() {
               <span className="grid size-6 place-items-center bg-background/20 text-xs">{i + 1}</span>
               {s.label}
               {s.slots.every((sl) => placed[sl.id]) && <Check className="size-4" />}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="mt-3 flex items-center gap-3">
@@ -223,25 +233,25 @@ export function DigestiveSystemBuilder() {
         {/* لوحة القطع والتعليمات */}
         <div className="border-b border-border p-4 sm:p-6 lg:border-b-0 lg:border-l">
           <p className="border-r-4 border-primary bg-primary/10 p-4 font-bold leading-8">{stage.goal}</p>
-          <p className="mt-4 flex items-center gap-2 text-sm font-bold text-muted-foreground"><MousePointerClick className="size-4" /> اسحب القطعة إلى موضعها المرقم، أو انقرها ثم انقر الموضع.</p>
+          <p className="mt-4 flex items-center gap-2 text-sm font-bold text-muted-foreground"><MousePointerClick className="size-4" /> اسحب العضو إلى ظله التشريحي، أو انقره ثم انقر الموضع.</p>
 
           <div className="mt-5 flex min-h-28 flex-wrap items-center gap-3 border-2 border-dashed border-border bg-secondary/20 p-4" aria-label="قطع المرحلة">
             {remaining.length === 0 && <span className="font-bold text-success">اكتملت قطع هذه المرحلة ✔</span>}
             {remaining.map((slot) => (
-              <button
+              <Button variant="outline"
                 key={slot.id}
                 type="button"
                 aria-label={`قطعة ${slot.label}`}
-                onClick={() => setSelected(selected === slot.id ? null : slot.id)}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(selected === slot.id ? null : slot.id); } }}
-                onPointerDown={(e) => { setDragging(slot.id); setDragPos(null); (e.target as HTMLElement).setPointerCapture?.(e.pointerId); }}
+                onClick={() => { if (!movedRef.current) setSelected(selected === slot.id ? null : slot.id); movedRef.current = false; }}
+                                onPointerDown={(e) => { if (e.button !== 0) return; movedRef.current = false; setDragging(slot.id); setDragPos(null); e.currentTarget.setPointerCapture(e.pointerId); }}
                 className={cn(
-                  "cursor-grab touch-none border-2 px-4 py-3 text-base font-black shadow-sm transition active:cursor-grabbing",
+                  "h-32 w-36 flex-col whitespace-normal cursor-grab touch-none border-2 p-2 text-sm font-black shadow-sm transition active:cursor-grabbing [&_svg]:size-16",
                   selected === slot.id ? "border-primary bg-primary/15 ring-2 ring-ring" : "border-border bg-card hover:border-primary/60",
                 )}
               >
-                {slot.label}
-              </button>
+                <AnatomyThumbnail id={slot.id} />
+                <span className="text-center leading-5">{slot.label}</span>
+              </Button>
             ))}
           </div>
 
@@ -266,85 +276,42 @@ export function DigestiveSystemBuilder() {
             </div>
           )}
 
-          <button type="button" onClick={() => setReferenceOpen(true)} className="mt-5 w-full border border-border bg-background p-3 text-sm font-bold text-primary transition hover:border-primary">
+          <Button variant="outline" type="button" onClick={() => setReferenceOpen(true)} className="mt-5 w-full border border-border bg-background p-3 text-sm font-bold text-primary transition hover:border-primary">
             فتح الصورة التشريحية الحقيقية للمقارنة
-          </button>
+          </Button>
         </div>
 
         {/* لوحة الجسم */}
         <div className="bg-secondary/20 p-3 sm:p-5">
           <svg
+            ref={boardRef}
             viewBox="0 0 100 100"
             role="application"
             aria-label="جسم إنسان أمامي — لوحة تركيب الجهاز الهضمي"
-            className="mx-auto max-h-[72vh] w-full max-w-xl select-none"
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
+            className="mx-auto aspect-square w-full max-w-xl select-none"
           >
-            {/* جسم الإنسان */}
-            <g stroke="var(--muted-foreground)" strokeWidth="0.6" fill="var(--secondary)" opacity="0.9">
-              <circle cx="50" cy="6" r="5.5" />
-              <path d="M50 12 L50 30 M50 16 Q38 18 34 32 M50 16 Q62 18 66 32 M50 30 L50 62 M50 62 L42 92 M50 62 L58 92" fill="none" />
-              <ellipse cx="50" cy="46" rx="14" ry="17" fill="var(--secondary)" />
-            </g>
-
-            {/* مسار الغذاء بعد اكتمال الأنبوب */}
-            {STAGES[0]!.slots.every((s) => placed[s.id]) && (
-              <path d="M50 8 L50 22 L44 34 Q50 44 50 54 Q50 62 50 68" fill="none" stroke="var(--primary)" strokeWidth="1" strokeDasharray="2 1.6" className="animate-pulse" />
-            )}
-            {/* طريقا النقل بعد اكتمالهما */}
-            {placed["blood-path"] && <path d="M52 54 Q62 44 62 32" fill="none" stroke="var(--destructive)" strokeWidth="1.1" markerEnd="url(#arrowR)" />}
-            {placed["lymph-path"] && <path d="M46 54 Q36 48 36 40" fill="none" stroke="var(--chart-5)" strokeWidth="1.1" strokeDasharray="1.6 1.2" />}
-            {placed["cell-target"] && <path d="M62 30 Q74 22 80 14" fill="none" stroke="var(--destructive)" strokeWidth="0.9" strokeDasharray="1.4 1.2" />}
-            <defs>
-              <marker id="arrowR" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="var(--destructive)" /></marker>
-            </defs>
-
-            {/* مواضع التركيب للمرحلة الحالية */}
-            {STAGES.flatMap((s, si) =>
-              s.slots.map((slot) => {
-                const done = placed[slot.id];
-                const isCurrent = si === state.stage && !done;
-                return (
-                  <g key={slot.id}>
-                    {done ? (
-                      <g>
-                        <circle cx={slot.x} cy={slot.y} r={si === state.stage ? 3.4 : 2} fill="var(--success)" opacity="0.92" />
-                        {si === state.stage && <text x={slot.x} y={slot.y + 0.9} textAnchor="middle" fontSize="2.6" fontWeight="800" fill="var(--success-foreground)">✓</text>}
-                        {si === state.stage && <text x={slot.x} y={slot.y + 6.2} textAnchor="middle" fontSize="2.4" fontWeight="800" fill="var(--foreground)" stroke="var(--background)" strokeWidth="0.5" paintOrder="stroke">{slot.label}</text>}
-                      </g>
-                    ) : isCurrent ? (
-                      <g
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`موضع ${slot.label}`}
-                        onClick={() => selected && tryPlace(selected, slot.id)}
-                        onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected) { e.preventDefault(); tryPlace(selected, slot.id); } }}
-                        style={{ cursor: selected ? "pointer" : "default" }}
-                      >
-                        <circle
-                          cx={slot.x} cy={slot.y} r="3.6"
-                          fill={showAnswer || selected ? "var(--primary)" : "var(--background)"}
-                          fillOpacity={showAnswer || selected ? 0.35 : 0.7}
-                          stroke="var(--primary)" strokeWidth="0.7" strokeDasharray="1.4 1.2"
-                        />
-                        <text x={slot.x} y={slot.y + 1.1} textAnchor="middle" fontSize="3.4" fontWeight="900" fill="var(--primary)">؟</text>
-                        {showAnswer && <text x={slot.x} y={slot.y - 6} textAnchor="middle" fontSize="2.6" fontWeight="700" fill="var(--primary)">{slot.label}</text>}
-                      </g>
-                    ) : null}
-                  </g>
-                );
-              }),
-            )}
-
-            {/* القطعة أثناء السحب */}
-            {dragging && dragPos && (
-              <g pointerEvents="none">
-                <circle cx={dragPos.x} cy={dragPos.y} r="5" fill="var(--accent)" fillOpacity="0.85" stroke="var(--accent-foreground)" strokeWidth="0.5" />
-                <text x={dragPos.x} y={dragPos.y + 1.1} textAnchor="middle" fontSize="2.8" fontWeight="900" fill="var(--accent-foreground)">{stage.slots.find((s) => s.id === dragging)?.label}</text>
-              </g>
-            )}
+            <AnatomyBody />
+            <text x="21" y="26" textAnchor="middle" fontSize="2.4" fill="var(--muted-foreground)">يمين الجسم</text>
+            <text x="79" y="26" textAnchor="middle" fontSize="2.4" fill="var(--muted-foreground)">يسار الجسم</text>
+            {placed.villi && <path d="M59 65 L74 65" fill="none" stroke="var(--anatomy-absorption)" strokeWidth="0.5" strokeDasharray="1 1" />}
+            {STAGES.flatMap((s) => s.slots).filter((slot) => placed[slot.id]).map((slot) => <g key={slot.id} aria-label={`عضو مركب ${slot.label}`}><AnatomyOrgan id={slot.id} /></g>)}
+            {placed["cell-target"] && placed.heart && <path d="M56 33 Q65 20 77 29" fill="none" stroke="var(--anatomy-blood)" strokeWidth="0.7" strokeDasharray="1.5 1" />}
+            {remaining.map((slot, i) => <g key={slot.id} role="button" tabIndex={0} aria-label={`موضع ${slot.label}`} className="cursor-pointer focus:outline-none"
+              onClick={() => selected && tryPlace(selected, slot.id)}
+              onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected) { e.preventDefault(); tryPlace(selected, slot.id); } }}>
+              <AnatomyOrgan id={slot.id} ghost />
+              <circle cx={slot.x} cy={slot.y} r="3.1" fill="var(--background)" fillOpacity="0.85" stroke="var(--primary)" strokeWidth="0.45" strokeDasharray={selected ? undefined : "1 0.7"} />
+              <text x={slot.x} y={slot.y + 1} textAnchor="middle" fontSize="3" fontWeight="800" fill="var(--primary)">{i + 1}</text>
+              {showAnswer && <AnatomyOrgan id={slot.id} />}
+            </g>)}
+            {dragging && dragPos && (() => {
+              const piece = ANATOMY_PIECES[dragging];
+              return piece ? <g pointerEvents="none" opacity="0.8" transform={`translate(${dragPos.x - piece.x - piece.width / 2} ${dragPos.y - piece.y - piece.height / 2})`}><AnatomyOrgan id={dragging} /></g> : null;
+            })()}
           </svg>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-bold text-muted-foreground" aria-label="الأعضاء المركبة">
+            {STAGES.flatMap((s) => s.slots).filter((slot) => placed[slot.id]).map((slot) => <span key={slot.id} className="flex items-center gap-1"><Check className="size-3 text-success" />{slot.label}</span>)}
+          </div>
         </div>
       </div>
 
