@@ -16,3 +16,4 @@
 - Uploaded teacher files are stored as data URLs in the draft (3MB cap) — no Supabase storage, since there is no auth.
 - Copyable "original" lessons stay in `src/data/lessons.ts`; teacher copies get fresh ids prefixed `lesson-` and their curriculum session records `originalLessonId` to enable restore.
 - `dig-mouth`, `dig-stomach`, `dig-anatomy`, `eq-phenomenon`, and `eq-causes` always retain their dedicated document-led journeys after local teacher edits, with editable stations rendered inside the matching journey stage. Why: custom classroom activities and uploaded documents must not replace the specialized teaching experience.
+- Digestive puzzle drawings and assembly bounds share one SVG anatomy registry; use its bounds for trays, placement, and pointer hit testing. Why: organ previews must match their assembled anatomy without independent coordinate drift.

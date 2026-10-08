@@ -51,6 +51,28 @@
 }
 
 :root {
+  --anatomy-body: #e7c5b0;
+  --anatomy-body-edge: #927568;
+  --anatomy-cavity: #f5e3d6;
+  --anatomy-outline: #653a43;
+  --anatomy-highlight: #ffe8dd;
+  --anatomy-fold: #a74858;
+  --anatomy-mouth: #d96378;
+  --anatomy-esophagus: #e79b91;
+  --anatomy-stomach: #ee929d;
+  --anatomy-intestine: #f3b5a0;
+  --anatomy-colon: #cc8999;
+  --anatomy-gland: #e7bb68;
+  --anatomy-liver: #a94d4f;
+  --anatomy-bile: #74a851;
+  --anatomy-pancreas: #f0c464;
+  --anatomy-absorption: #178f99;
+  --anatomy-blood: #d44259;
+  --anatomy-vein: #508dc5;
+  --anatomy-lymph: #2b9e74;
+  --anatomy-heart: #c74e65;
+  --anatomy-cell: #89c8dd;
+  --anatomy-ghost: #9c8f85;
   --radius: 1.5rem;
   --background: oklch(0.97 0.024 92);
   --foreground: oklch(0.32 0.045 60);

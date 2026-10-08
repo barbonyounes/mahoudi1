@@ -26,7 +26,6 @@ export const ANATOMY_PIECES: Record<string, AnatomyPiece> = {
     <path d="M17 23 H75 M25 54 H76 M24 85 H63" fill="none" stroke="var(--anatomy-highlight)" strokeWidth="1.8" opacity="0.65" />
   </> },
   "large-intestine": { x: 36, y: 53, width: 29, height: 29, color: "var(--anatomy-colon)", art: <>
-    <path d="M15 62 V22 Q15 11 28 14 Q46 21 70 12 Q84 8 85 22 V sixty" fill="none" opacity="0" />
     <path d="M14 62 L14 25 Q13 13 26 15 Q47 23 71 14 Q86 10 86 25 L85 62 Q85 76 69 75 Q53 73 52 89 L52 98" fill="none" stroke="var(--anatomy-outline)" strokeWidth="14" strokeLinecap="round" />
     <path d="M14 62 L14 25 Q13 13 26 15 Q47 23 71 14 Q86 10 86 25 L85 62 Q85 76 69 75 Q53 73 52 89 L52 98" fill="none" stroke="var(--anatomy-colon)" strokeWidth="11" strokeLinecap="round" />
     {[29, 40, 51, 61].map(y => <g key={y}><path d={`M9 ${y} Q14 ${y + 4} 19 ${y}`} fill="none" strokeWidth="1.5" /><path d={`M80 ${y} Q85 ${y + 4} 90 ${y}`} fill="none" strokeWidth="1.5" /></g>)}
